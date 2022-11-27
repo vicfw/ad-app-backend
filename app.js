@@ -9,6 +9,8 @@ const cors = require('cors');
 const app = express();
 
 const userRouter = require('./routes/userRoutes');
+const categoryRouter = require('./routes/categoryRoutes');
+
 const AppError = require('./utils/appError');
 
 app.enable('trust proxy');
@@ -41,6 +43,7 @@ app.use(compression());
 // Routes
 
 app.use('/api/v1/users', userRouter);
+app.use('/api/v1/categories', categoryRouter);
 
 app.all('*', (req, res, next) => {
   next(new AppError(`Can't find ${req.originalUrl} on this server!`, 404));
