@@ -10,6 +10,7 @@ const app = express();
 
 const userRouter = require('./routes/userRoutes');
 const categoryRouter = require('./routes/categoryRoutes');
+const uploadRouter = require('./routes/uploadRoutes');
 
 const AppError = require('./utils/appError');
 
@@ -44,6 +45,7 @@ app.use(compression());
 
 app.use('/api/v1/users', userRouter);
 app.use('/api/v1/categories', categoryRouter);
+app.use('/api/v1/upload', uploadRouter);
 
 app.all('*', (req, res, next) => {
   next(new AppError(`Can't find ${req.originalUrl} on this server!`, 404));
