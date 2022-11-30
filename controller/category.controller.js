@@ -1,5 +1,5 @@
-const Category = require('../models/categoryModel');
-const catchAsync = require('../utils/catchAsync');
+const Category = require("../models/categoryModel");
+const catchAsync = require("../utils/catchAsync");
 
 function getCategoriesAndSubcategories(categories, parentId = null) {
   const categoryList = [];
@@ -14,7 +14,7 @@ function getCategoriesAndSubcategories(categories, parentId = null) {
       _id: cat._id,
       name: cat.name,
       parentId: cat.parentId,
-      type: cat.type,
+      categoryImage: cat.categoryImage,
       children: getCategoriesAndSubcategories(categories, cat._id),
     });
   }
@@ -22,7 +22,7 @@ function getCategoriesAndSubcategories(categories, parentId = null) {
 }
 
 exports.createCategory = catchAsync(async (req, res) => {
-  console.log(req.user, 'in controller');
+  console.log(req.user, "in controller");
   // let categoryImage;
   // if (req.file) {
   //   categoryImage = `/public/${req.file.filename}`;
@@ -33,21 +33,21 @@ exports.createCategory = catchAsync(async (req, res) => {
   });
   await category.save();
 
-  res.status(201).json({ status: 'success', data: category });
+  res.status(201).json({ status: "success", data: category });
 });
 
 exports.getallCategories = catchAsync(async (req, res, next) => {
   try {
     const categories = await Category.find({});
-    console.log(categories, 'categories');
+    console.log(categories, "categories");
     if (!categories) {
-      return res.status(504).json({ msg: 'مشکلی به وجود امده است' });
+      return res.status(504).json({ msg: "مشکلی به وجود امده است" });
     }
     const categoryList = getCategoriesAndSubcategories(categories);
 
     res.status(200).send({ categoryList });
   } catch (e) {
-    res.status(504).json({ msg: 'مشکلی به وجود امده است' });
+    res.status(504).json({ msg: "مشکلی به وجود امده است" });
   }
 });
 
@@ -61,7 +61,7 @@ exports.updateCategories = async (req, res) => {
           name: name[i],
           type: type[i],
         };
-        if (parentId[i] !== '') {
+        if (parentId[i] !== "") {
           category.parentId = parentId[i];
         }
         const updateCategory = await Category.findOneAndUpdate(
@@ -80,7 +80,7 @@ exports.updateCategories = async (req, res) => {
         type,
         _id,
       };
-      if (parentId !== '') {
+      if (parentId !== "") {
         category.parentId = parentId;
       }
       const updatedCategory = await Category.findOneAndUpdate(
@@ -105,8 +105,8 @@ exports.deleteCategories = async (req, res) => {
     deletedCategories.push(deleteCategory);
   }
   if (deletedCategories.length === ids.length) {
-    return res.status(200).json({ msg: 'دسته بندی با موفقیت حذف شد' });
+    return res.status(200).json({ msg: "دسته بندی با موفقیت حذف شد" });
   } else {
-    return res.status(400).json({ msg: 'مشکلی به وجود آمده است' });
+    return res.status(400).json({ msg: "مشکلی به وجود آمده است" });
   }
 };
