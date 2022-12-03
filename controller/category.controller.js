@@ -22,7 +22,6 @@ function getCategoriesAndSubcategories(categories, parentId = null) {
 }
 
 exports.createCategory = catchAsync(async (req, res) => {
-  console.log(req.user, 'in controller');
   // let categoryImage;
   // if (req.file) {
   //   categoryImage = `/public/${req.file.filename}`;
@@ -39,7 +38,7 @@ exports.createCategory = catchAsync(async (req, res) => {
 exports.getallCategories = catchAsync(async (req, res, next) => {
   try {
     const categories = await Category.find({});
-    console.log(categories, 'categories');
+
     if (!categories) {
       return res.status(504).json({ msg: 'مشکلی به وجود امده است' });
     }
@@ -54,7 +53,7 @@ exports.getallCategories = catchAsync(async (req, res, next) => {
 exports.getallCategoriesWithoutChildren = catchAsync(async (req, res, next) => {
   try {
     const categories = await Category.find({});
-    console.log(categories, 'categories');
+
     if (!categories) {
       return res.status(504).json({ msg: 'مشکلی به وجود امده است' });
     }
@@ -106,9 +105,7 @@ exports.updateCategories = async (req, res) => {
       );
       return res.status(201).json({ updatedCategory });
     }
-  } catch (e) {
-    console.log(e);
-  }
+  } catch (e) {}
 };
 
 exports.deleteCategories = async (req, res) => {

@@ -3,8 +3,6 @@ const aws = require('aws-sdk');
 const s3Storage = require('multer-sharp-s3');
 const s3 = new aws.S3({});
 
-console.log(process.env.S3_UPLOAD_SECRET, 'process.env.S3_UPLOAD_SECRET');
-
 s3.config.update({
   secretAccessKey: process.env.S3_UPLOAD_SECRET, // Not working key, Your SECRET ACCESS KEY from AWS should go here, never share it!!!
   accessKeyId: process.env.S3_UPLOAD_KEY, // Not working key, Your ACCESS KEY ID from AWS should go here, never share it!!!

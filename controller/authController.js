@@ -13,7 +13,6 @@ const signToken = (id) => {
 };
 
 const createSendToken = (user, statusCode, req, res) => {
-  console.log(user._id);
   const token = signToken(user._id);
 
   // res.cookie("jwt", token, {
@@ -37,7 +36,6 @@ const createSendToken = (user, statusCode, req, res) => {
 };
 
 exports.signup = catchAsync(async (req, res, next) => {
-  console.log(req.body);
   const newUser = await User.create({
     name: req.body.name,
     email: req.body.email,
@@ -45,10 +43,8 @@ exports.signup = catchAsync(async (req, res, next) => {
     confirmPassword: req.body.confirmPassword,
   });
 
-  console.log(newUser, 'new User');
-
   // const url = `${req.protocol}://${req.get("host")}/me`;
-  // console.log(url);
+  //
   // await new Email(newUser, url).sendWelcome();
 
   createSendToken(newUser, 201, req, res);
@@ -83,25 +79,28 @@ exports.logout = (req, res) => {
 exports.protect = catchAsync(async (req, res, next) => {
   // 1) Getting token and check of it's there
   let token;
-  console.log(req.headers.authorization);
+
+  console.log(req.headers);
 
   if (
     req.headers.authorization &&
     req.headers.authorization.startsWith('Bearer')
   ) {
     token = req.headers.authorization.split(' ')[1];
-  } else if (req.cookies.jwt) {
-    token = req.cookies.jwt;
   }
+  // else if (req.cookies.jwt) {
+  //   token = req.cookies.jwt;
+  // }
+  console.log(token, 'token');
 
   if (!token) {
     return next(
       new AppError('You are not logged in! Please log in to get access.', 401)
     );
   }
+
   // 2) Verification token
   const decoded = await promisify(jwt.verify)(token, process.env.JWT_SECRET);
-  console.log(decoded);
 
   // 3) Check if user still exists
   const currentUser = await User.findById(decoded.id);
@@ -124,7 +123,7 @@ exports.protect = catchAsync(async (req, res, next) => {
   // GRANT ACCESS TO PROTECTED ROUTE
   req.user = currentUser;
   res.locals.user = currentUser;
-  console.log(req.user);
+
   next();
 });
 

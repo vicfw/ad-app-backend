@@ -1,15 +1,20 @@
 const mongoose = require('mongoose');
 
-const categorySchema = mongoose.Schema(
+const adSchema = mongoose.Schema(
   {
     title: {
       type: String,
       required: true,
       trim: true,
       lowercase: true,
+      minLength: 3,
     },
     adImages: {
-      xs: [String],
+      xs: {
+        type: [String],
+        required: true,
+        maxLength: 10,
+      },
     },
 
     description: {
@@ -40,25 +45,27 @@ const categorySchema = mongoose.Schema(
       lowercase: true,
     },
     phone: {
-      type: number,
-      required: true,
-      min: 0,
-    },
-    kilometers: {
       type: Number,
       default: 0,
+      min: 0,
     },
     condition: {
+      type: String,
       enum: ['new', 'used'],
       required: true,
     },
     saleBy: {
+      type: String,
       enum: ['all', 'owner', 'dealer'],
       required: true,
     },
+    // trucks category optional fields
+    kilometers: {
+      type: Number,
+    },
     transmission: {
+      type: String,
       enum: ['automatic ', 'manual'],
-      default: 'automatic',
     },
     engineHP: {
       type: String,
@@ -101,6 +108,7 @@ const categorySchema = mongoose.Schema(
       lowercase: true,
     },
     wheels: {
+      type: String,
       enum: ['steel', 'aluminum'],
     },
     isApproved: {
@@ -115,4 +123,4 @@ const categorySchema = mongoose.Schema(
   { timestamps: true }
 );
 
-module.exports = mongoose.model('Category', categorySchema);
+module.exports = mongoose.model('Ad', adSchema);
