@@ -41,6 +41,12 @@ const userSchema = new mongoose.Schema({
       message: 'Passwords are not the same!',
     },
   },
+  featuredAds: [
+    {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'FeatureAd',
+    },
+  ],
   passwordChangedAt: Date,
   passwordResetToken: String,
   passwordResetExpires: Date,

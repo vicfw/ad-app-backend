@@ -12,6 +12,7 @@ const userRouter = require('./routes/userRoutes');
 const categoryRouter = require('./routes/categoryRoutes');
 const adRouter = require('./routes/adRoutes');
 const uploadRouter = require('./routes/uploadRoutes');
+const featuredAdRouter = require('./routes/featuredAd');
 
 const AppError = require('./utils/appError');
 
@@ -48,6 +49,7 @@ app.use('/api/v1/users', userRouter);
 app.use('/api/v1/categories', categoryRouter);
 app.use('/api/v1/ad', adRouter);
 app.use('/api/v1/upload', uploadRouter);
+app.use('/api/v1/featuredAd', featuredAdRouter);
 
 app.all('*', (req, res, next) => {
   next(new AppError(`Can't find ${req.originalUrl} on this server!`, 404));
