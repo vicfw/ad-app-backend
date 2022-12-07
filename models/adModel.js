@@ -15,6 +15,11 @@ const adSchema = mongoose.Schema(
         required: true,
         maxLength: 10,
       },
+      md: {
+        type: [String],
+        required: true,
+        maxLength: 10,
+      },
     },
 
     description: {
@@ -58,6 +63,15 @@ const adSchema = mongoose.Schema(
       type: String,
       enum: ['all', 'owner', 'dealer'],
       required: true,
+    },
+    featuredAd: { type: mongoose.Schema.Types.ObjectId, ref: 'FeatureAd' },
+    isApproved: {
+      type: Boolean,
+      default: false,
+    },
+    isPopular: {
+      type: Boolean,
+      default: false,
     },
     // trucks category optional fields
     kilometers: {
@@ -110,14 +124,6 @@ const adSchema = mongoose.Schema(
     wheels: {
       type: String,
       enum: ['steel', 'aluminum'],
-    },
-    isApproved: {
-      type: Boolean,
-      default: false,
-    },
-    isPopular: {
-      type: Boolean,
-      default: false,
     },
   },
   { timestamps: true }

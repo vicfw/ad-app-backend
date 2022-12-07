@@ -29,7 +29,7 @@ const adPhotoStorage = s3Storage({
   resize: [
     // { suffix: 'xlg', width: 1200, height: 1200 },
     // { suffix: 'lg', width: 800, height: 800 },
-    // { suffix: 'md', width: 500, height: 500 },
+    { suffix: 'md', width: 300, height: 500 },
     // { suffix: 'sm', width: 300, height: 300 },
     { suffix: 'xs', width: 140, height: 120 },
   ],

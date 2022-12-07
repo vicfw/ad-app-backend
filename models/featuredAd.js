@@ -5,6 +5,7 @@ const featureAd = mongoose.Schema(
     ad: {
       type: mongoose.Schema.Types.ObjectId,
       ref: 'Ad',
+      unique: true,
     },
     owner: {
       type: mongoose.Schema.Types.ObjectId,
