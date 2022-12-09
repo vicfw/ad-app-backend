@@ -7,6 +7,7 @@ exports.createAd = catchAsync(async (req, res, next) => {
 });
 
 exports.getAllAds = catchAsync(async (req, res, next) => {
+  console.log('here');
   const query = req.query;
   const ads = await Ad.find({})
     .populate('featuredAd')

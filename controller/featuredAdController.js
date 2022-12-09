@@ -16,8 +16,11 @@ exports.createFeaturedAd = catchAsync(async (req, res, next) => {
 });
 
 exports.deleteFeaturedAd = catchAsync(async (req, res, next) => {
-  await FeaturedAd.deleteOne({ _id: req.body.id });
-  const ad = await Ad.findOne({ _id: req.body.ad });
+  console.log(req.body);
+
+  const ss = await FeaturedAd.findByIdAndDelete({ _id: req.body.featuredAdId });
+  console.log(ss);
+  const ad = await Ad.findOne({ _id: req.body.adId });
 
   delete ad.featuredAd;
 
