@@ -1,4 +1,4 @@
-const mongoose = require('mongoose');
+const mongoose = require("mongoose");
 
 const adSchema = mongoose.Schema(
   {
@@ -17,7 +17,10 @@ const adSchema = mongoose.Schema(
       xs: {
         type: [String],
         required: true,
-        maxLength: 10,
+        validate: function (value) {
+          value.length > 10;
+        },
+        message: () => `cant be more than 10 photos`,
       },
       md: {
         type: [String],
@@ -60,12 +63,12 @@ const adSchema = mongoose.Schema(
     },
     condition: {
       type: String,
-      enum: ['new', 'used'],
+      enum: ["new", "used"],
       required: true,
     },
     saleBy: {
       type: String,
-      enum: ['all', 'owner', 'dealer'],
+      enum: ["all", "owner", "dealer"],
       required: true,
     },
     isApproved: {
@@ -82,7 +85,7 @@ const adSchema = mongoose.Schema(
     },
     transmission: {
       type: String,
-      enum: ['automatic ', 'manual'],
+      enum: ["automatic ", "manual"],
     },
     engineHP: {
       type: String,
@@ -126,10 +129,10 @@ const adSchema = mongoose.Schema(
     },
     wheels: {
       type: String,
-      enum: ['steel', 'aluminum'],
+      enum: ["steel", "aluminum"],
     },
   },
   { timestamps: true }
 );
 
-module.exports = mongoose.model('Ad', adSchema);
+module.exports = mongoose.model("Ad", adSchema);
