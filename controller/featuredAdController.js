@@ -1,30 +1,25 @@
 const catchAsync = require('../utils/catchAsync');
 const FeaturedAd = require('../models/featuredAd');
 const Ad = require('../models/adModel');
+const User = require('../models/userModel');
 
 exports.createFeaturedAd = catchAsync(async (req, res, next) => {
   console.log(req.body);
-  const featureAd = await FeaturedAd.create(req.body);
+  const featureAd = await FeaturedAd.create({
+    ...req.body,
+    owner: req.user._id,
+  });
 
-  const ad = await Ad.findOne({ _id: req.body.ad });
-
-  ad.featuredAd = featureAd._id;
-
-  await ad.save();
+  const ad = await User.findByIdAndUpdate(
+    { _id: req.user._id },
+    { $push: { featuredAds: featureAd._id } }
+  );
 
   res.status(201).json({ status: 'success', featureAd });
 });
 
 exports.deleteFeaturedAd = catchAsync(async (req, res, next) => {
-  console.log(req.body);
-
-  const ss = await FeaturedAd.findByIdAndDelete({ _id: req.body.featuredAdId });
-  console.log(ss);
-  const ad = await Ad.findOne({ _id: req.body.adId });
-
-  delete ad.featuredAd;
-
-  await ad.save();
+  await FeaturedAd.findByIdAndDelete({ _id: req.body.featuredAdId });
 
   res.status(200).json({ status: 'success' });
 });

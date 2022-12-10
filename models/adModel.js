@@ -2,6 +2,10 @@ const mongoose = require('mongoose');
 
 const adSchema = mongoose.Schema(
   {
+    creator: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'User',
+    },
     title: {
       type: String,
       required: true,
@@ -64,7 +68,6 @@ const adSchema = mongoose.Schema(
       enum: ['all', 'owner', 'dealer'],
       required: true,
     },
-    featuredAd: { type: mongoose.Schema.Types.ObjectId, ref: 'FeatureAd' },
     isApproved: {
       type: Boolean,
       default: false,
