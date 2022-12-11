@@ -4,7 +4,7 @@ const adSchema = mongoose.Schema(
   {
     creator: {
       type: mongoose.Schema.Types.ObjectId,
-      ref: 'User',
+      ref: "User",
     },
     title: {
       type: String,

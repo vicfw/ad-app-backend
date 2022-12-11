@@ -1,15 +1,12 @@
 const catchAsync = require("../utils/catchAsync");
 const Ad = require("../models/adModel");
 exports.createAd = catchAsync(async (req, res, next) => {
-  console.log(req.user, "user");
-
   const ad = await Ad.create({ ...req.body, creator: req.user._id });
 
   res.status(201).json({ status: "success", ad });
 });
 
 exports.getAllAds = catchAsync(async (req, res, next) => {
-  console.log("here");
   const query = req.query;
   const ads = await Ad.find({})
     .populate({ path: "creator", populate: { path: "featuredAds" } })
