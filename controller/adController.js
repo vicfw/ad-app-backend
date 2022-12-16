@@ -17,3 +17,16 @@ exports.getAllAds = catchAsync(async (req, res, next) => {
   const count = await Ad.estimatedDocumentCount();
   res.status(201).json({ status: 'success', count, ads });
 });
+
+exports.getSingleAdController = catchAsync(async (req, res) => {
+  const _id = req.params.id;
+
+  console.log(req.params);
+
+  const ad = await Ad.findOne({ _id });
+
+  if (!ad) {
+    res.status(400).json({ status: 'fail', message: 'bad request' });
+  }
+  res.status(200).json({ status: 'success', ad });
+});

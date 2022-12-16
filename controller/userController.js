@@ -103,8 +103,16 @@ exports.createUser = (req, res) => {
   });
 };
 
-exports.getUser = factory.getOne(User, 'featuredAds');
+exports.getUser = factory.getOne(User, [
+  { path: 'ads', model: 'Ad' },
+  { path: 'featuredAds', model: 'FeatureAd' },
+]);
 exports.getAllUsers = factory.getAll(User);
+
+// [
+//   { path: 'ads', model: 'Ad' },
+//   { path: 'featuredAds', model: 'FeatureAd' },
+// ]
 
 // Do NOT update passwords with this!
 exports.updateUser = factory.updateOne(User);
