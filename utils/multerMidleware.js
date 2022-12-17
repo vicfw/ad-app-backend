@@ -2,6 +2,7 @@ const multer = require('multer');
 const aws = require('aws-sdk');
 const s3Storage = require('multer-sharp-s3');
 const s3 = new aws.S3({});
+const crypto = require('crypto');
 
 s3.config.update({
   secretAccessKey: process.env.S3_UPLOAD_SECRET, // Not working key, Your SECRET ACCESS KEY from AWS should go here, never share it!!!
@@ -25,7 +26,12 @@ const adPhotoStorage = s3Storage({
   s3,
   Bucket: 'adsphoto',
   ACL: '',
-  Key: `${process.env.S3_UPLOAD_BUCKET}/adImages/${Date.now()}`,
+  // Key: `${process.env.S3_UPLOAD_BUCKET}/adImages/${Date.now()}`,
+  Key: (req, file, cb) => {
+    crypto.pseudoRandomBytes(16, (err, raw) => {
+      cb(err, err ? undefined : raw.toString('hex'));
+    });
+  },
   resize: [
     // { suffix: 'xlg', width: 1200, height: 1200 },
     // { suffix: 'lg', width: 800, height: 800 },
