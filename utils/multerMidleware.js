@@ -22,6 +22,18 @@ const storage2 = s3Storage({
   max: true,
 });
 
+const profilePhotoStorage = s3Storage({
+  s3,
+  Bucket: 'adsphoto',
+  ACL: '',
+  Key: `${process.env.S3_UPLOAD_BUCKET}/categoryImages/${Date.now()}`,
+  resize: {
+    width: 100,
+    height: 100,
+  },
+  max: true,
+});
+
 const adPhotoStorage = s3Storage({
   s3,
   Bucket: 'adsphoto',
@@ -45,6 +57,7 @@ const adPhotoStorage = s3Storage({
 });
 
 exports.upload = multer({ storage: storage2 });
+exports.profilePhotoUpload = multer({ storage: profilePhotoStorage });
 exports.adImageUpload = multer({
   storage: adPhotoStorage,
   limits: { fieldSize: 25 * 1024 * 1024 },
