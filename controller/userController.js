@@ -72,8 +72,6 @@ exports.updateMe = catchAsync(async (req, res, next) => {
   // 2) Filtered out unwanted fields names that are not allowed to be updated
   const filteredBody = filterObj(req.body, 'name', 'email', 'photo');
 
-  console.log(filteredBody, 'filteredBody');
-
   // 3) Update user document
   const user = await User.findByIdAndUpdate(req.user.id, filteredBody, {
     new: true,
@@ -99,7 +97,13 @@ exports.getCurrentUser = catchAsync(async (req, res, next) => {
         sort: { createdAt: -1 },
       },
     },
-    { path: 'featuredAds', model: 'FeatureAd' },
+    {
+      path: 'featuredAds',
+      model: 'FeatureAd',
+      options: {
+        select: '-createdAt',
+      },
+    },
   ]);
 
   return res.status(200).json({

@@ -7,6 +7,16 @@ exports.createAd = catchAsync(async (req, res, next) => {
   res.status(201).json({ status: 'success', ad });
 });
 
+exports.updateAd = catchAsync(async (req, res, next) => {
+  const ad = await Ad.findByIdAndUpdate(
+    { _id: req.body._id },
+    { ...req.body },
+    { new: true, runValidators: true }
+  );
+
+  res.status(201).json({ status: 'success', ad });
+});
+
 exports.getAllAds = catchAsync(async (req, res, next) => {
   const query = req.query;
   const ads = await Ad.find({})

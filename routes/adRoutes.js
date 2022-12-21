@@ -4,11 +4,13 @@ const {
   getAllAds,
   getSingleAdController,
   deleteAd,
+  updateAd,
 } = require('../controller/adController');
 const { protect } = require('../controller/authController');
 const router = express.Router();
 
 router.post('/create', protect, createAd);
+router.patch('/', protect, updateAd);
 router.get('/', protect, getAllAds);
 router.get('/:id', getSingleAdController);
 

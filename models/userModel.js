@@ -43,12 +43,6 @@ const userSchema = new mongoose.Schema(
       },
     },
 
-    featuredAds: [
-      {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: 'FeatureAd',
-      },
-    ],
     passwordChangedAt: Date,
     passwordResetToken: String,
     passwordResetExpires: Date,
@@ -64,6 +58,12 @@ const userSchema = new mongoose.Schema(
 userSchema.virtual('ads', {
   ref: 'Ad',
   foreignField: 'creator',
+  localField: '_id',
+});
+
+userSchema.virtual('featuredAds', {
+  ref: 'FeatureAd',
+  foreignField: 'owner',
   localField: '_id',
 });
 
