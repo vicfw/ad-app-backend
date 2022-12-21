@@ -1,6 +1,6 @@
 const catchAsync = require('../utils/catchAsync');
 const Ad = require('../models/adModel');
-const factory = require('./handlerFactory');
+const FeatureAd = require('../models/featuredAd');
 exports.createAd = catchAsync(async (req, res, next) => {
   const ad = await Ad.create({ ...req.body, creator: req.user._id });
 
@@ -46,6 +46,8 @@ exports.getSingleAdController = catchAsync(async (req, res) => {
 
 exports.deleteAd = catchAsync(async (req, res, next) => {
   const doc = await Ad.findByIdAndDelete(req.params.id);
+
+  await FeatureAd.findOneAndDelete({ ad: req.params.id });
 
   if (!doc) {
     return next(new AppError('No document found with that ID', 404));
