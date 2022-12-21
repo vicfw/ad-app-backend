@@ -41,6 +41,7 @@ const adPhotoStorage = s3Storage({
   // Key: `${process.env.S3_UPLOAD_BUCKET}/adImages/${Date.now()}`,
   Key: (req, file, cb) => {
     crypto.pseudoRandomBytes(16, (err, raw) => {
+      console.log(file, 'file');
       cb(err, err ? undefined : raw.toString('hex'));
     });
   },
@@ -60,5 +61,5 @@ exports.upload = multer({ storage: storage2 });
 exports.profilePhotoUpload = multer({ storage: profilePhotoStorage });
 exports.adImageUpload = multer({
   storage: adPhotoStorage,
-  limits: { fieldSize: 25 * 1024 * 1024 },
+  // limits: { fieldSize: 25 * 1024 * 1024 },
 });
