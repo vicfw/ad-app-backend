@@ -1,5 +1,6 @@
 const mongoose = require('mongoose');
 require('dotenv').config();
+const Room = require('./models/roomModel');
 
 process.on('uncaughtException', (err) => {
   console.log('UNCAUGHT EXCEPTION! 💥 Shutting down...');
@@ -42,7 +43,17 @@ http.listen(process.env.PORT, () => {
 socketIO.on('connection', (socket) => {
   console.log(`⚡: ${socket.id} user just connected!`);
 
-  socket.emit('event', 'blad');
+  // create Room
+  socket.on('createRoom', async (userId) => {
+    const isRoomExist = await Room.findOne({ owner: userId });
+    if (isRoomExist) {
+      return;
+    }
+    const room = await Room.create({ owner: userId });
+
+    console.log(room, 'room');
+    console.log(userId, 'userId');
+  });
 
   socket.on('disconnect', () => {
     socket.disconnect();
