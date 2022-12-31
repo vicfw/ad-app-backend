@@ -9,6 +9,14 @@ process.on('uncaughtException', (err) => {
 
 const app = require('./app.js');
 
+const http = require('http').Server(app);
+
+const socketIO = require('socket.io')(http, {
+  cors: {
+    origin: '*',
+  },
+});
+
 let DB;
 
 if (process.env.NODE_ENV === 'production') {
@@ -27,8 +35,19 @@ mongoose
   .then(() => console.log('DB connection successful!'))
   .catch((e) => console.log(e));
 
-app.listen(process.env.PORT, () => {
+http.listen(process.env.PORT, () => {
   console.log('Server Is Running On ' + process.env.PORT);
+});
+
+socketIO.on('connection', (socket) => {
+  console.log(`⚡: ${socket.id} user just connected!`);
+
+  socket.emit('event', 'blad');
+
+  socket.on('disconnect', () => {
+    socket.disconnect();
+    console.log('🔥: A user disconnected');
+  });
 });
 
 process.on('unhandledRejection', (err) => {
