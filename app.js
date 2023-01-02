@@ -13,7 +13,8 @@ const categoryRouter = require('./routes/categoryRoutes');
 const adRouter = require('./routes/adRoutes');
 const uploadRouter = require('./routes/uploadRoutes');
 const featuredAdRouter = require('./routes/featuredAd');
-const roomRouter = require('./routes/roomRouter');
+const chatRoutes = require('./routes/chatRoutes');
+const messageRoutes = require('./routes/messageRoutes');
 
 const AppError = require('./utils/appError');
 
@@ -51,7 +52,8 @@ app.use('/api/v1/categories', categoryRouter);
 app.use('/api/v1/ad', adRouter);
 app.use('/api/v1/upload', uploadRouter);
 app.use('/api/v1/featuredAd', featuredAdRouter);
-app.use('/api/v1/room', roomRouter);
+app.use('/api/v1/chat', chatRoutes);
+app.use('/api/v1/message', messageRoutes);
 
 app.all('*', (req, res, next) => {
   next(new AppError(`Can't find ${req.originalUrl} on this server!`, 404));

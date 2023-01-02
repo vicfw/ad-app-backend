@@ -73,7 +73,7 @@ exports.logout = (req, res) => {
     expires: new Date(Date.now() + 10 * 1000),
     httpOnly: true,
   });
-  delete req.user;
+  // delete req.user;
   res.status(200).json({ status: 'success' });
 };
 
