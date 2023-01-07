@@ -20,6 +20,9 @@ exports.allMessages = catchAsync(async (req, res) => {
 exports.sendMessage = catchAsync(async (req, res) => {
   const { content, chatId } = req.body;
 
+  console.log(content, 'content');
+  console.log(chatId, 'chatId');
+
   if (!content || !chatId) {
     console.log('Invalid data passed into request');
     return res.sendStatus(400);
@@ -33,8 +36,8 @@ exports.sendMessage = catchAsync(async (req, res) => {
 
   var message = await Message.create(newMessage);
 
-  message = await message.populate('sender', 'name photo');
-  message = await message.populate('chat');
+  message = await message.populate('sender', 'name photo').execPopulate();
+  message = await message.populate('chat').execPopulate();
   message = await User.populate(message, {
     path: 'chat.users',
     select: 'name photo email',

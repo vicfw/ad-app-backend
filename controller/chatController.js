@@ -3,11 +3,16 @@ const Chat = require('../models/chatModel');
 const User = require('../models/userModel');
 
 exports.accessChat = catchAsync(async (req, res) => {
-  const { userId } = req.body;
+  const { userId, adId } = req.body;
 
-  if (!userId) {
+  console.log(userId, 'userId accessChat');
+  console.log(adId, 'adId accessChat');
+
+  if (!userId || !adId) {
     console.log('UserId param not sent with request');
-    return res.sendStatus(400);
+    return res
+      .status(400)
+      .json({ status: 'error', message: 'UserId param not sent with request' });
   }
 
   var isChat = await Chat.find({
@@ -17,7 +22,8 @@ exports.accessChat = catchAsync(async (req, res) => {
     ],
   })
     .populate('users', '-password')
-    .populate('latestMessage');
+    .populate('latestMessage')
+    .populate('ad');
 
   isChat = await User.populate(isChat, {
     path: 'latestMessage.sender',
@@ -30,14 +36,14 @@ exports.accessChat = catchAsync(async (req, res) => {
     var chatData = {
       chatName: 'sender',
       users: [req.user._id, userId],
+      ad: adId,
     };
 
     const createdChat = await Chat.create(chatData);
-    const FullChat = await Chat.findOne({ _id: createdChat._id }).populate(
-      'users',
-      '-password'
-    );
-    res.status(200).json(FullChat);
+    const fullChat = await Chat.findOne({ _id: createdChat._id })
+      .populate('users', '-password')
+      .populate('ad');
+    res.status(200).json(fullChat);
   }
 });
 
@@ -49,11 +55,12 @@ exports.fetchChats = catchAsync(async (req, res) => {
   Chat.find({ users: { $elemMatch: { $eq: req.user._id } } })
     .populate('users', '-password')
     .populate('latestMessage')
+    .populate('ad')
     .sort({ updatedAt: -1 })
     .then(async (results) => {
       results = await User.populate(results, {
         path: 'latestMessage.sender',
-        select: 'name PHOTO email',
+        select: 'name photo email',
       });
       res.status(200).send(results);
     });
