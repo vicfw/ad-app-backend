@@ -20,9 +20,6 @@ exports.allMessages = catchAsync(async (req, res) => {
 exports.sendMessage = catchAsync(async (req, res) => {
   const { content, chatId } = req.body;
 
-  console.log(content, 'content');
-  console.log(chatId, 'chatId');
-
   if (!content || !chatId) {
     console.log('Invalid data passed into request');
     return res.sendStatus(400);
