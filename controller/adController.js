@@ -38,7 +38,6 @@ exports.getSingleAdController = catchAsync(async (req, res) => {
 
   const ad = await Ad.findOne({ _id }).populate({
     path: 'creator',
-    select: '_id',
   });
 
   if (!ad) {
