@@ -40,13 +40,13 @@ exports.getallCategories = catchAsync(async (req, res, next) => {
     const categories = await Category.find({});
 
     if (!categories) {
-      return res.status(504).json({ msg: 'مشکلی به وجود امده است' });
+      return res.status(504).json({ msg: ' Something went wrong' });
     }
     const categoryList = getCategoriesAndSubcategories(categories);
 
     res.status(200).send({ categoryList });
   } catch (e) {
-    res.status(504).json({ msg: 'مشکلی به وجود امده است' });
+    res.status(504).json({ msg: ' Something went wrong' });
   }
 });
 
@@ -55,12 +55,12 @@ exports.getallCategoriesWithoutChildren = catchAsync(async (req, res, next) => {
     const categories = await Category.find({});
 
     if (!categories) {
-      return res.status(504).json({ msg: 'مشکلی به وجود امده است' });
+      return res.status(504).json({ msg: ' Something went wrong' });
     }
 
     res.status(200).json({ status: 'success', data: categories });
   } catch (e) {
-    res.status(504).json({ msg: 'مشکلی به وجود امده است' });
+    res.status(504).json({ msg: ' Something went wrong' });
   }
 });
 
@@ -109,15 +109,15 @@ exports.updateCategories = async (req, res) => {
 };
 
 exports.deleteCategories = async (req, res) => {
-  const { ids } = req.body.payload;
+  const { ids } = req.body;
   const deletedCategories = [];
   for (let i = 0; i < ids.length; i++) {
-    const deleteCategory = await Category.findOneAndDelete({ _id: ids[i]._id });
+    const deleteCategory = await Category.findOneAndDelete({ _id: ids[i] });
     deletedCategories.push(deleteCategory);
   }
   if (deletedCategories.length === ids.length) {
-    return res.status(200).json({ msg: 'دسته بندی با موفقیت حذف شد' });
+    return res.status(200).json({ msg: 'Category deleted successfully' });
   } else {
-    return res.status(400).json({ msg: 'مشکلی به وجود آمده است' });
+    return res.status(400).json({ msg: 'Something went wrong!' });
   }
 };

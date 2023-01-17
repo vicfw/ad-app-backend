@@ -22,15 +22,26 @@ exports.updateAd = catchAsync(async (req, res, next) => {
 });
 
 exports.getAllAds = catchAsync(async (req, res, next) => {
-  const query = req.query;
-  const ads = await Ad.find({})
+  const { categoryId, limit, page, price } = req.query;
+  const parsedPrice = JSON.parse(price);
+
+  const filterObj = {
+    ...(categoryId ? { category: categoryId } : {}),
+    ...(parsedPrice.length
+      ? { price: { $gte: parsedPrice[0], $lte: parsedPrice[1] } }
+      : {}),
+  };
+
+  const ads = await Ad.find(filterObj)
     .populate({ path: 'creator', populate: { path: 'featuredAds' } })
-    .limit(query?.limit ? +query.limit : 0)
-    .skip(query?.page === 1 ? +query.limit : +query.page * +query.limit)
+    .limit(limit ? +limit : 0)
+    .skip(page === 1 ? +limit : +page * +limit)
     .sort({ createdAt: -1 });
 
-  const count = await Ad.estimatedDocumentCount();
-  res.status(201).json({ status: 'success', count, ads });
+  const totalCount = await Ad.estimatedDocumentCount();
+  res
+    .status(200)
+    .json({ status: 'success', totalCount, count: ads.length, ads });
 });
 
 exports.getSingleAdController = catchAsync(async (req, res) => {
