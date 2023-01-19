@@ -25,6 +25,8 @@ exports.getAllAds = catchAsync(async (req, res, next) => {
   const { categoryId, limit, page, price } = req.query;
   const parsedPrice = JSON.parse(price);
 
+  
+
   const filterObj = {
     ...(categoryId ? { category: categoryId } : {}),
     ...(parsedPrice.length
