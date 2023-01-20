@@ -2,6 +2,11 @@ const catchAsync = require('../utils/catchAsync');
 const Ad = require('../models/adModel');
 const FeatureAd = require('../models/featuredAd');
 exports.createAd = catchAsync(async (req, res, next) => {
+  // todo:test trimmedBody
+  // let trimmedBody;
+  // for (let item in req.body) {
+  //   trimmedBody = { ...item.trim() };
+  // }
   const ad = await Ad.create({ ...req.body, creator: req.user._id });
 
   res.status(201).json({ status: 'success', ad });
@@ -22,16 +27,54 @@ exports.updateAd = catchAsync(async (req, res, next) => {
 });
 
 exports.getAllAds = catchAsync(async (req, res, next) => {
-  const { categoryId, limit, page, price } = req.query;
-  const parsedPrice = JSON.parse(price);
+  const {
+    category,
+    limit,
+    page,
+    minPrice,
+    maxPrice,
+    address,
+    location,
+    condition,
+    saleBy,
+    minKilometers,
+    maxKilometers,
+    transmission,
+    engineHP,
+    engine,
+    exteriorColor,
+    differential,
+    frontAxel,
+    realAxel,
+    suspension,
+    wheelbase,
+    wheels,
+  } = req.query;
 
-  
+  console.log(req.query, 'req.query');
 
   const filterObj = {
-    ...(categoryId ? { category: categoryId } : {}),
-    ...(parsedPrice.length
-      ? { price: { $gte: parsedPrice[0], $lte: parsedPrice[1] } }
-      : {}),
+    ...(category ? { category } : undefined),
+    ...(minPrice ? { price: { $gte: minPrice } } : undefined),
+    ...(maxPrice ? { price: { $lte: maxPrice } } : undefined),
+    ...(address ? { address: { $regex: address } } : undefined),
+    ...(location ? { location } : undefined),
+    ...(condition ? { condition } : undefined),
+    ...(saleBy ? { saleBy } : undefined),
+    ...(minKilometers ? { kilometers: { $gte: minKilometers } } : undefined),
+    ...(maxKilometers ? { kilometers: { $lte: maxKilometers } } : undefined),
+    ...(transmission ? { transmission } : undefined),
+    ...(engineHP ? { engineHP: { $regex: engineHP } } : undefined),
+    ...(engine ? { engine: { $regex: engine } } : undefined),
+    ...(exteriorColor
+      ? { exteriorColor: { $regex: exteriorColor } }
+      : undefined),
+    ...(differential ? { differential: { $regex: differential } } : undefined),
+    ...(frontAxel ? { frontAxel: { $regex: frontAxel } } : undefined),
+    ...(realAxel ? { realAxel: { $regex: realAxel } } : undefined),
+    ...(suspension ? { suspension: { $regex: suspension } } : undefined),
+    ...(wheelbase ? { wheelbase: { $regex: wheelbase } } : undefined),
+    ...(wheels ? { wheels } : undefined),
   };
 
   const ads = await Ad.find(filterObj)
@@ -40,7 +83,7 @@ exports.getAllAds = catchAsync(async (req, res, next) => {
     .skip(page === 1 ? +limit : +page * +limit)
     .sort({ createdAt: -1 });
 
-  const totalCount = await Ad.estimatedDocumentCount();
+  const totalCount = await Ad.find(filterObj).countDocuments();
   res
     .status(200)
     .json({ status: 'success', totalCount, count: ads.length, ads });
