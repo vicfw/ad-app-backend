@@ -140,4 +140,6 @@ const adSchema = mongoose.Schema(
   { timestamps: true }
 );
 
+adSchema.index({ title: "text" });
+
 module.exports = mongoose.model("Ad", adSchema);
