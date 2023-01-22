@@ -1,4 +1,4 @@
-const mongoose = require('mongoose');
+const mongoose = require("mongoose");
 
 const categorySchema = mongoose.Schema(
   {
@@ -8,13 +8,20 @@ const categorySchema = mongoose.Schema(
       trim: true,
       lowercase: true,
     },
-    categoryImage: { type: String, default: 'pic' },
+    categoryImage: { type: String, default: "pic" },
+
     parentId: {
       type: String,
       default: null,
     },
   },
-  { timestamps: true }
+  { timestamps: true, toJSON: { virtuals: true }, toObject: { virtuals: true } }
 );
 
-module.exports = mongoose.model('Category', categorySchema);
+categorySchema.virtual("ads", {
+  ref: "Ad",
+  foreignField: "category",
+  localField: "_id",
+});
+
+module.exports = mongoose.model("Category", categorySchema);
