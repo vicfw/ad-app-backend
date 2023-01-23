@@ -1,6 +1,7 @@
-const catchAsync = require("../utils/catchAsync");
-const Ad = require("../models/adModel");
-const FeatureAd = require("../models/featuredAd");
+const catchAsync = require('../utils/catchAsync');
+const Ad = require('../models/adModel');
+const FeatureAd = require('../models/featuredAd');
+const AppError = require('../utils/appError');
 exports.createAd = catchAsync(async (req, res, next) => {
   // todo:test trimmedBody
   // let trimmedBody;
@@ -9,21 +10,17 @@ exports.createAd = catchAsync(async (req, res, next) => {
   // }
   const ad = await Ad.create({ ...req.body, creator: req.user._id });
 
-  res.status(201).json({ status: "success", ad });
+  res.status(201).json({ status: 'success', ad });
 });
 
 exports.updateAd = catchAsync(async (req, res, next) => {
-  console.log(req.params, "req.params");
-  console.log(req.body, "req.body");
   const ad = await Ad.findByIdAndUpdate(
     { _id: req.params.id },
     { ...req.body },
     { new: true, runValidators: true }
   );
 
-  console.log(ad, "ad after update");
-
-  res.status(201).json({ status: "success", ad });
+  res.status(201).json({ status: 'success', ad });
 });
 
 exports.getAllAds = catchAsync(async (req, res, next) => {
@@ -51,8 +48,6 @@ exports.getAllAds = catchAsync(async (req, res, next) => {
     wheels,
   } = req.query;
 
-  console.log(req.query, "req.query");
-
   const filterObj = {
     ...(category ? { category } : undefined),
     ...(minPrice ? { price: { $gte: minPrice } } : undefined),
@@ -78,7 +73,7 @@ exports.getAllAds = catchAsync(async (req, res, next) => {
   };
 
   const ads = await Ad.find(filterObj)
-    .populate({ path: "creator", populate: { path: "featuredAds" } })
+    .populate({ path: 'creator', populate: { path: 'featuredAds' } })
     .limit(limit ? +limit : 0)
     .skip(page === 1 ? +limit : +page * +limit)
     .sort({ createdAt: -1 });
@@ -86,25 +81,29 @@ exports.getAllAds = catchAsync(async (req, res, next) => {
   const totalCount = await Ad.find(filterObj).countDocuments();
   res
     .status(200)
-    .json({ status: "success", totalCount, count: ads.length, ads });
+    .json({ status: 'success', totalCount, count: ads.length, ads });
 });
 
 exports.getSingleAdController = catchAsync(async (req, res) => {
   const _id = req.params.id;
 
   const ad = await Ad.findOne({ _id }).populate({
-    path: "creator",
+    path: 'creator',
   });
 
   if (!ad) {
-    return res.status(400).json({ status: "fail", message: "bad request" });
+    return res.status(400).json({ status: 'fail', message: 'bad request' });
   }
-  return res.status(200).json({ status: "success", ad });
+  return res.status(200).json({ status: 'success', ad });
 });
 
-exports.searchAdsContorller = catchAsync(async (req, res, next) => {
+exports.searchAdsController = catchAsync(async (req, res, next) => {
   const { query } = req.query;
-  console.log(query);
+
+  console.log(query, 'query in search');
+
+  if (!query) return;
+
   const ads = await Ad.find({ $text: { $search: query } })
     .sort({
       createdAt: -1,
@@ -112,11 +111,13 @@ exports.searchAdsContorller = catchAsync(async (req, res, next) => {
     .limit(10);
 
   if (!ads?.length) {
-    return next(new AppError("No document found", 404));
+    return next(new AppError('No document found', 404));
   }
 
+  console.log(ads, 'ads');
+
   return res.status(200).json({
-    status: "success",
+    status: 'success',
     data: ads,
     total: ads.length,
   });
@@ -128,13 +129,11 @@ exports.deleteAd = catchAsync(async (req, res, next) => {
   await FeatureAd.findOneAndDelete({ ad: req.params.id });
 
   if (!doc) {
-    return next(new AppError("No document found with that ID", 404));
+    return next(new AppError('No document found with that ID', 404));
   }
 
-  console.log(doc, "doc");
-
   return res.status(204).json({
-    status: "success",
+    status: 'success',
     data: null,
   });
 });
