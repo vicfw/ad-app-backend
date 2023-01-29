@@ -1,5 +1,5 @@
-const Category = require("../models/categoryModel");
-const catchAsync = require("../utils/catchAsync");
+const Category = require('../models/categoryModel');
+const catchAsync = require('../utils/catchAsync');
 
 function getCategoriesAndSubcategories(categories, parentId = null) {
   const categoryList = [];
@@ -33,21 +33,21 @@ exports.createCategory = catchAsync(async (req, res) => {
   });
   await category.save();
 
-  res.status(201).json({ status: "success", data: category });
+  res.status(201).json({ status: 'success', data: category });
 });
 
 exports.getallCategories = catchAsync(async (req, res, next) => {
   try {
-    const categories = await Category.find({}).populate("ads");
+    const categories = await Category.find({}).populate('ads');
 
     if (!categories) {
-      return res.status(504).json({ msg: "no category found" });
+      return res.status(504).json({ msg: 'no category found' });
     }
     const categoryList = getCategoriesAndSubcategories(categories);
 
     res.status(200).send({ categoryList });
   } catch (e) {
-    res.status(504).json({ msg: " Something went wrong" });
+    res.status(504).json({ msg: ' Something went wrong' });
   }
 });
 
@@ -56,12 +56,12 @@ exports.getallCategoriesWithoutChildren = catchAsync(async (req, res, next) => {
     const categories = await Category.find({});
 
     if (!categories) {
-      return res.status(504).json({ msg: " Something went wrong" });
+      return res.status(504).json({ msg: ' Something went wrong' });
     }
 
-    res.status(200).json({ status: "success", data: categories });
+    res.status(200).json({ status: 'success', data: categories });
   } catch (e) {
-    res.status(504).json({ msg: " Something went wrong" });
+    res.status(504).json({ msg: ' Something went wrong' });
   }
 });
 
@@ -75,7 +75,7 @@ exports.updateCategories = async (req, res) => {
           name: name[i],
           type: type[i],
         };
-        if (parentId[i] !== "") {
+        if (parentId[i] !== '') {
           category.parentId = parentId[i];
         }
         const updateCategory = await Category.findOneAndUpdate(
@@ -94,7 +94,7 @@ exports.updateCategories = async (req, res) => {
         type,
         _id,
       };
-      if (parentId !== "") {
+      if (parentId !== '') {
         category.parentId = parentId;
       }
       const updatedCategory = await Category.findOneAndUpdate(
@@ -117,8 +117,18 @@ exports.deleteCategories = async (req, res) => {
     deletedCategories.push(deleteCategory);
   }
   if (deletedCategories.length === ids.length) {
-    return res.status(200).json({ msg: "Category deleted successfully" });
+    return res.status(200).json({ msg: 'Category deleted successfully' });
   } else {
-    return res.status(400).json({ msg: "Something went wrong!" });
+    return res.status(400).json({ msg: 'Something went wrong!' });
   }
 };
+
+exports.getLastFourCategories = catchAsync(async (req, res, next) => {
+  const lastFourCategories = await Category.find({
+    parentId: null,
+  })
+    .limit(4)
+    .sort({ createdAt: -1 });
+
+  res.status(200).json({ status: 'success', data: lastFourCategories });
+});
