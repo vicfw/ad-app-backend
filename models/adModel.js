@@ -1,10 +1,10 @@
-const mongoose = require("mongoose");
+const mongoose = require('mongoose');
 
 const adSchema = mongoose.Schema(
   {
     creator: {
       type: mongoose.Schema.Types.ObjectId,
-      ref: "User",
+      ref: 'User',
     },
     title: {
       type: String,
@@ -42,6 +42,7 @@ const adSchema = mongoose.Schema(
     },
     category: {
       type: mongoose.Schema.Types.ObjectId,
+      ref: 'Category',
       required: true,
     },
     price: {
@@ -63,17 +64,17 @@ const adSchema = mongoose.Schema(
     },
     phone: {
       type: String,
-      default: "",
+      default: '',
       min: 0,
     },
     condition: {
       type: String,
-      enum: ["new", "used"],
+      enum: ['new', 'used'],
       required: true,
     },
     saleBy: {
       type: String,
-      enum: ["all", "owner", "dealer"],
+      enum: ['all', 'owner', 'dealer'],
       required: true,
     },
     isApproved: {
@@ -90,7 +91,7 @@ const adSchema = mongoose.Schema(
     },
     transmission: {
       type: String,
-      enum: ["automatic", "manual"],
+      enum: ['automatic', 'manual'],
     },
     engineHP: {
       type: String,
@@ -134,12 +135,12 @@ const adSchema = mongoose.Schema(
     },
     wheels: {
       type: String,
-      enum: ["steel", "aluminum"],
+      enum: ['steel', 'aluminum'],
     },
   },
-  { timestamps: true }
+  { timestamps: true, toJSON: { virtuals: true }, toObject: { virtuals: true } }
 );
 
-adSchema.index({ title: "text" });
+adSchema.index({ title: 'text' });
 
-module.exports = mongoose.model("Ad", adSchema);
+module.exports = mongoose.model('Ad', adSchema);
