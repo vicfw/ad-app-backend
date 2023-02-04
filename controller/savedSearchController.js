@@ -26,7 +26,7 @@ exports.getSavedSearch = catchAsync(async (req, res, next) => {
   if (!savedSearch) {
     return res.status(400).json({
       status: 'error',
-      message: 'there are no saved search for this user',
+      message: 'there is no saved search for this user',
     });
   }
 

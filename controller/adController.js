@@ -79,6 +79,7 @@ exports.getAllAds = catchAsync(async (req, res, next) => {
 
   const ads = await Ad.find(filterObj)
     .populate({ path: 'creator', populate: { path: 'featuredAds' } })
+    .populate('category')
     .limit(limit ? +limit : 0)
     .skip(page === 1 ? +limit : +page * +limit)
     .sort({ createdAt: -1 });
