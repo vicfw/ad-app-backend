@@ -28,6 +28,21 @@ exports.updateAd = catchAsync(async (req, res, next) => {
   res.status(201).json({ status: 'success', ad });
 });
 
+exports.updateManyAds = catchAsync(async (req, res, next) => {
+  const ad = await Ad.updateMany(
+    { _id: req.body.ids },
+    { ...req.body.property }
+  );
+
+  console.log(ad, 'ad');
+
+  if (ad.ok > 0) {
+    res.status(201).json({ status: 'success' });
+  } else {
+    res.status(400).json({ status: 'fail' });
+  }
+});
+
 exports.getAllAds = catchAsync(async (req, res, next) => {
   const {
     category,
@@ -51,10 +66,14 @@ exports.getAllAds = catchAsync(async (req, res, next) => {
     suspension,
     wheelbase,
     wheels,
+    isApproved,
+    isNotApproved,
   } = req.query;
 
   const filterObj = {
     ...(category ? { category } : undefined),
+    ...(isApproved ? { isApproved: true } : undefined),
+    ...(isNotApproved ? { isApproved: false } : undefined),
     ...(minPrice ? { price: { $gte: minPrice } } : undefined),
     ...(maxPrice ? { price: { $lte: maxPrice } } : undefined),
     ...(address ? { address: { $regex: address } } : undefined),
