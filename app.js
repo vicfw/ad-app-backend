@@ -21,7 +21,7 @@ const AppError = require('./utils/appError');
 
 app.enable('trust proxy');
 
-app.use(cors());
+app.use(cors({ credentials: true, origin: true }));
 
 app.options('*', cors());
 

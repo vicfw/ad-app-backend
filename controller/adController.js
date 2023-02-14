@@ -34,8 +34,6 @@ exports.updateManyAds = catchAsync(async (req, res, next) => {
     { ...req.body.property }
   );
 
-  console.log(ad, 'ad');
-
   if (ad.ok > 0) {
     res.status(201).json({ status: 'success' });
   } else {
