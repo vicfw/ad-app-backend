@@ -168,3 +168,14 @@ exports.deleteAd = catchAsync(async (req, res, next) => {
     data: null,
   });
 });
+exports.deleteManyAds = catchAsync(async (req, res, next) => {
+  const ad = await Ad.deleteMany({ _id: req.body });
+
+  console.log(ad, 'ad');
+
+  if (ad.ok > 0 && ad.deletedCount > 0) {
+    res.status(201).json({ status: 'success' });
+  } else {
+    res.status(400).json({ status: 'fail' });
+  }
+});
