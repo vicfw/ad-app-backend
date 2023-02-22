@@ -23,13 +23,8 @@ function getCategoriesAndSubcategories(categories, parentId = null) {
 }
 
 exports.createCategory = catchAsync(async (req, res) => {
-  // let categoryImage;
-  // if (req.file) {
-  //   categoryImage = `/public/${req.file.filename}`;
-  // }
   const category = new Category({
     ...req.body,
-    // categoryImage,
   });
   await category.save();
 

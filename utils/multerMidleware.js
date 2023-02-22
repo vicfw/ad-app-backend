@@ -14,7 +14,11 @@ const storage2 = s3Storage({
   s3,
   Bucket: 'adsphoto',
   ACL: '',
-  Key: `${process.env.S3_UPLOAD_BUCKET}/categoryImages/${Date.now()}`,
+  Key: (req, file, cb) => {
+    crypto.pseudoRandomBytes(16, (err, raw) => {
+      cb(err, err ? undefined : raw.toString('hex'));
+    });
+  },
   resize: {
     width: 60,
     height: 60,
@@ -26,7 +30,11 @@ const profilePhotoStorage = s3Storage({
   s3,
   Bucket: 'adsphoto',
   ACL: '',
-  Key: `${process.env.S3_UPLOAD_BUCKET}/categoryImages/${Date.now()}`,
+  Key: (req, file, cb) => {
+    crypto.pseudoRandomBytes(16, (err, raw) => {
+      cb(err, err ? undefined : raw.toString('hex'));
+    });
+  },
   resize: {
     width: 100,
     height: 100,
@@ -41,7 +49,6 @@ const adPhotoStorage = s3Storage({
   // Key: `${process.env.S3_UPLOAD_BUCKET}/adImages/${Date.now()}`,
   Key: (req, file, cb) => {
     crypto.pseudoRandomBytes(16, (err, raw) => {
-      console.log(file, 'file');
       cb(err, err ? undefined : raw.toString('hex'));
     });
   },
