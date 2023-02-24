@@ -25,8 +25,6 @@ exports.profilePhoto = catchAsync(async (req, res, next) => {
 });
 
 exports.adImage = catchAsync(async (req, res, next) => {
-  console.log(req.file);
-
   if (!req.file) {
     return res.status(400).json({
       status: 'fail',

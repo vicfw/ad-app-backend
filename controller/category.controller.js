@@ -17,12 +17,15 @@ function getCategoriesAndSubcategories(categories, parentId = null) {
       categoryImage: cat.categoryImage,
       ads: cat.ads,
       children: getCategoriesAndSubcategories(categories, cat._id),
+      createdAt: cat.createdAt,
     });
   }
-  return categoryList;
+  return categoryList.sort((a, b) => b.createdAt - a.createdAt);
 }
 
 exports.createCategory = catchAsync(async (req, res) => {
+  console.log(req.body);
+
   const category = new Category({
     ...req.body,
   });
@@ -60,63 +63,31 @@ exports.getallCategoriesWithoutChildren = catchAsync(async (req, res, next) => {
   }
 });
 
-exports.updateCategories = async (req, res) => {
-  try {
-    const { _id, name, parentId, type } = req.body;
-    const updatedCategories = [];
-    if (name instanceof Array) {
-      for (let i = 0; i < name.length; i++) {
-        const category = {
-          name: name[i],
-          type: type[i],
-        };
-        if (parentId[i] !== '') {
-          category.parentId = parentId[i];
-        }
-        const updateCategory = await Category.findOneAndUpdate(
-          { _id: _id[i] },
-          category,
-          {
-            new: true,
-          }
-        );
-        updatedCategories.push(updateCategory);
-      }
-      return res.status(201).json({ updatedCategories });
-    } else {
-      const category = {
-        name,
-        type,
-        _id,
-      };
-      if (parentId !== '') {
-        category.parentId = parentId;
-      }
-      const updatedCategory = await Category.findOneAndUpdate(
-        { _id: _id },
-        category,
-        {
-          new: true,
-        }
-      );
-      return res.status(201).json({ updatedCategory });
-    }
-  } catch (e) {}
-};
+exports.updateCategories = catchAsync(async (req, res) => {
+  const { _id, name, parentId } = req.body;
 
-exports.deleteCategories = async (req, res) => {
-  const { ids } = req.body;
-  const deletedCategories = [];
-  for (let i = 0; i < ids.length; i++) {
-    const deleteCategory = await Category.findOneAndDelete({ _id: ids[i] });
-    deletedCategories.push(deleteCategory);
-  }
-  if (deletedCategories.length === ids.length) {
-    return res.status(200).json({ msg: 'Category deleted successfully' });
-  } else {
-    return res.status(400).json({ msg: 'Something went wrong!' });
-  }
-};
+  const category = {
+    name,
+    parentId,
+  };
+
+  const updatedCategory = await Category.findOneAndUpdate(
+    { _id: _id },
+    category,
+    {
+      new: true,
+    }
+  );
+  return res.status(201).json({ updatedCategory });
+});
+
+exports.deleteCategories = catchAsync(async (req, res) => {
+  const { _id } = req.body;
+
+  await Category.findOneAndDelete({ _id });
+
+  return res.status(200).json('deleted');
+});
 
 exports.getLastFourCategories = catchAsync(async (req, res, next) => {
   const lastFourCategories = await Category.find({
