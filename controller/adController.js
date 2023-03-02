@@ -116,8 +116,6 @@ exports.getSingleAdController = catchAsync(async (req, res) => {
     })
     .populate('category');
 
-  console.log(ad);
-
   if (!ad) {
     return res.status(400).json({ status: 'fail', message: 'bad request' });
   }
@@ -129,8 +127,6 @@ exports.searchAdsController = catchAsync(async (req, res, next) => {
 
   const lowerCaseQuery = query?.toLowerCase();
 
-  console.log(query, 'query in search');
-
   if (!lowerCaseQuery) {
     return res.status(400).json({ message: 'query string is empty' });
   }
@@ -141,7 +137,6 @@ exports.searchAdsController = catchAsync(async (req, res, next) => {
     })
     .limit(10);
 
-  console.log(ads, 'ads');
   if (!ads?.length) {
     return res.status(400).json({ message: 'no ad with this query' });
   }
@@ -170,8 +165,6 @@ exports.deleteAd = catchAsync(async (req, res, next) => {
 });
 exports.deleteManyAds = catchAsync(async (req, res, next) => {
   const ad = await Ad.deleteMany({ _id: req.body });
-
-  console.log(ad, 'ad');
 
   if (ad.ok > 0 && ad.deletedCount > 0) {
     res.status(201).json({ status: 'success' });

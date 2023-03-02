@@ -5,11 +5,7 @@ const User = require('../models/userModel');
 exports.accessChat = catchAsync(async (req, res) => {
   const { userId, adId } = req.body;
 
-  console.log(userId, 'userId accessChat');
-  console.log(adId, 'adId accessChat');
-
   if (!userId || !adId) {
-    console.log('UserId param not sent with request');
     return res
       .status(400)
       .json({ status: 'error', message: 'UserId param not sent with request' });

@@ -24,8 +24,6 @@ function getCategoriesAndSubcategories(categories, parentId = null) {
 }
 
 exports.createCategory = catchAsync(async (req, res) => {
-  console.log(req.body);
-
   const category = new Category({
     ...req.body,
   });
