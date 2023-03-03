@@ -44,6 +44,7 @@ exports.updateManyAds = catchAsync(async (req, res, next) => {
 exports.getAllAds = catchAsync(async (req, res, next) => {
   const {
     category,
+    title,
     limit,
     page,
     minPrice,
@@ -68,8 +69,11 @@ exports.getAllAds = catchAsync(async (req, res, next) => {
     isNotApproved,
   } = req.query;
 
+  console.log(req.query);
+
   const filterObj = {
     ...(category ? { category } : undefined),
+    ...(title ? { title } : undefined),
     ...(isApproved ? { isApproved: true } : undefined),
     ...(isNotApproved ? { isApproved: false } : undefined),
     ...(minPrice ? { price: { $gte: minPrice } } : undefined),
@@ -93,6 +97,8 @@ exports.getAllAds = catchAsync(async (req, res, next) => {
     ...(wheelbase ? { wheelbase: { $regex: wheelbase } } : undefined),
     ...(wheels ? { wheels } : undefined),
   };
+
+  console.log(filterObj, 'filterObj');
 
   const ads = await Ad.find(filterObj)
     .populate({ path: 'creator', populate: { path: 'featuredAds' } })
