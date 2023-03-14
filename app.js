@@ -19,6 +19,8 @@ const savedSearchRoutes = require('./routes/savedSearchRoutes');
 
 const AppError = require('./utils/appError');
 
+app.set('trust proxy', 1);
+
 app.enable('trust proxy');
 
 app.use(cors({ credentials: true, origin: true }));
