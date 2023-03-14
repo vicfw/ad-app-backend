@@ -15,6 +15,7 @@ const socketIO = require('socket.io')(http, {
   pingTimeout: 60000,
   cors: {
     origin: '*',
+    credentials: true,
   },
 });
 
