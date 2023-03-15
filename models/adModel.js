@@ -70,12 +70,12 @@ const adSchema = mongoose.Schema(
     condition: {
       type: String,
       enum: ['new', 'used'],
-      required: true,
+      // required: true,
     },
     saleBy: {
       type: String,
       enum: ['all', 'owner', 'dealer'],
-      required: true,
+      // required: true,
     },
     isApproved: {
       type: Boolean,
