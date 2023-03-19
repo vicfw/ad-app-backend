@@ -85,7 +85,10 @@ const adSchema = mongoose.Schema(
       type: Boolean,
       default: false,
     },
-    // trucks category optional fields
+    // trucks  & trailers category optional fields
+    brand: {
+      type: string,
+    },
     kilometers: {
       type: Number,
     },
