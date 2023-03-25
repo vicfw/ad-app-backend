@@ -1,8 +1,5 @@
 const mongoose = require('mongoose');
 require('dotenv').config();
-const https = require('https');
-const http = require('http');
-const fs = require('fs');
 
 process.on('uncaughtException', (err) => {
   console.log('UNCAUGHT EXCEPTION! 💥 Shutting down...');
@@ -12,42 +9,21 @@ process.on('uncaughtException', (err) => {
 
 const app = require('./app.js');
 
-let server;
-let socketIO;
+const http = require('http').Server(app);
+
+const socketIO = require('socket.io')(http, {
+  pingTimeout: 60000,
+  cors: {
+    origin: '*',
+    credentials: true,
+  },
+});
+
 let DB;
 
-if (process.env.NODE_ENV === 'development') {
-  const options = {
-    key: fs.readFileSync(
-      '/etc/letsencrypt/live/api.gettruckloan.com/privkey.pem'
-    ),
-    cert: fs.readFileSync(
-      '/etc/letsencrypt/live/api.gettruckloan.com/fullchain.pem'
-    ),
-    ca: fs.readFileSync('/etc/letsencrypt/live/api.gettruckloan.com/chain.pem'),
-    requestCert: false,
-    rejectUnauthorized: false,
-  };
-  server = https.createServer(options, app);
-
-  socketIO = require('socket.io')(server, {
-    pingTimeout: 60000,
-    cors: {
-      origin: '*',
-      credentials: true,
-    },
-  });
+if (process.env.NODE_ENV === 'production') {
   DB = process.env.MONGODB_PROD;
 } else {
-  server = http.createServer(app);
-
-  socketIO = require('socket.io')(server, {
-    pingTimeout: 60000,
-    cors: {
-      origin: '*',
-      credentials: true,
-    },
-  });
   DB = process.env.MONGODB_PROD;
 }
 
@@ -61,7 +37,7 @@ mongoose
   .then(() => console.log('DB connection successful!'))
   .catch((e) => console.log(e));
 
-server.listen(process.env.PORT, () => {
+http.listen(process.env.PORT, () => {
   console.log('Server Is Running On ' + process.env.PORT);
 });
 
