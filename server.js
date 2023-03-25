@@ -1,5 +1,6 @@
 const mongoose = require('mongoose');
 require('dotenv').config();
+const https = require('https');
 
 process.on('uncaughtException', (err) => {
   console.log('UNCAUGHT EXCEPTION! 💥 Shutting down...');
@@ -9,9 +10,9 @@ process.on('uncaughtException', (err) => {
 
 const app = require('./app.js');
 
-const http = require('http').Server(app);
+const server = https.createServer(app);
 
-const socketIO = require('socket.io')(http, {
+const socketIO = require('socket.io')(server, {
   pingTimeout: 60000,
   cors: {
     origin: '*',
