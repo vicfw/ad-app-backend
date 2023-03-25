@@ -20,6 +20,8 @@ if (process.env.NODE_ENV === 'production') {
   const options = {
     key: fs.readFileSync('/etc/ssl/private/nginx-selfsigned.key'),
     cert: fs.readFileSync('/etc/ssl/certs/nginx-selfsigned.crt'),
+    requestCert: false,
+    rejectUnauthorized: false,
   };
   server = https.createServer(options, app);
 
