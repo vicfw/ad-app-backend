@@ -22,7 +22,7 @@ if (process.env.NODE_ENV === 'production') {
       '/etc/letsencrypt/live/api.gettruckloan.com/privkey.pem'
     ),
     cert: fs.readFileSync(
-      '/etc/letsencrypt/live/api.gettruckloan.com/cert.pem'
+      '/etc/letsencrypt/live/api.gettruckloan.com/fullchain.pem'
     ),
     ca: fs.readFileSync('/etc/letsencrypt/live/api.gettruckloan.com/chain.pem'),
     requestCert: false,
