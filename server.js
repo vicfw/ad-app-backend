@@ -16,7 +16,7 @@ let server;
 let socketIO;
 let DB;
 
-if (process.env.NODE_ENV === 'production') {
+if (process.env.NODE_ENV === 'development') {
   const options = {
     key: fs.readFileSync(
       '/etc/letsencrypt/live/api.gettruckloan.com/privkey.pem'
