@@ -9,9 +9,7 @@ process.on('uncaughtException', (err) => {
 
 const app = require('./app.js');
 
-const http = require(`${
-  process.env.NODE_ENV === 'development' ? 'http' : 'https'
-}`).Server(app);
+const http = require('https').Server(app);
 
 const socketIO = require('socket.io')(http, {
   pingTimeout: 60000,
