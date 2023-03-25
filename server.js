@@ -21,7 +21,7 @@ if (process.env.NODE_ENV === 'production') {
     key: fs.readFileSync('/etc/ssl/private/nginx-selfsigned.key'),
     cert: fs.readFileSync('/etc/ssl/certs/nginx-selfsigned.crt'),
   };
-  https.createServer(app);
+  https.createServer(options, app);
 
   socketIO = require('socket.io')(server, {
     pingTimeout: 60000,
