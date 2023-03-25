@@ -18,9 +18,12 @@ let DB;
 
 if (process.env.NODE_ENV === 'production') {
   const options = {
-    key: fs.readFileSync('/etc/ssl/private/nginx-selfsigned.key'),
-    cert: fs.readFileSync('/etc/ssl/certs/nginx-selfsigned.crt'),
-    ca: fs.readFileSync('/etc/ssl/certs/ca-certificates.crt'),
+    key: fs.readFileSync(
+      '/etc/letsencrypt/live/api.gettruckloan.com/privkey.pem'
+    ),
+    cert: fs.readFileSync(
+      '/etc/letsencrypt/live/api.gettruckloan.com/fullchain.pem'
+    ),
     requestCert: false,
     rejectUnauthorized: false,
   };
