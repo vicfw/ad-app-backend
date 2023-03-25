@@ -1,6 +1,7 @@
 const catchAsync = require('../utils/catchAsync');
 const Ad = require('../models/adModel');
 const FeatureAd = require('../models/featuredAd');
+const Chat = require('../models/chatModel');
 const AppError = require('../utils/appError');
 exports.createAd = catchAsync(async (req, res, next) => {
   // todo:test trimmedBody
@@ -159,6 +160,7 @@ exports.deleteAd = catchAsync(async (req, res, next) => {
   const doc = await Ad.findByIdAndDelete(req.params.id);
 
   await FeatureAd.findOneAndDelete({ ad: req.params.id });
+  await Chat.findOneAndDelete({ ad: req.params.id });
 
   if (!doc) {
     return next(new AppError('No document found with that ID', 404));
