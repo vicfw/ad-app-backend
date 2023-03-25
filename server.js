@@ -1,6 +1,8 @@
 const mongoose = require('mongoose');
 require('dotenv').config();
 const https = require('https');
+const http = require('http');
+const fs = require('fs');
 
 process.on('uncaughtException', (err) => {
   console.log('UNCAUGHT EXCEPTION! 💥 Shutting down...');
@@ -10,21 +12,35 @@ process.on('uncaughtException', (err) => {
 
 const app = require('./app.js');
 
-const server = https.createServer(app);
-
-const socketIO = require('socket.io')(server, {
-  pingTimeout: 60000,
-  cors: {
-    origin: '*',
-    credentials: true,
-  },
-});
-
+let server;
+let socketIO;
 let DB;
 
 if (process.env.NODE_ENV === 'production') {
+  const options = {
+    key: fs.readFileSync('/etc/ssl/private/nginx-selfsigned.key'),
+    cert: fs.readFileSync('/etc/ssl/certs/nginx-selfsigned.crt'),
+  };
+  https.createServer(app);
+
+  socketIO = require('socket.io')(server, {
+    pingTimeout: 60000,
+    cors: {
+      origin: '*',
+      credentials: true,
+    },
+  });
   DB = process.env.MONGODB_PROD;
 } else {
+  server = http.createServer(app);
+
+  socketIO = require('socket.io')(server, {
+    pingTimeout: 60000,
+    cors: {
+      origin: '*',
+      credentials: true,
+    },
+  });
   DB = process.env.MONGODB_PROD;
 }
 
@@ -38,7 +54,7 @@ mongoose
   .then(() => console.log('DB connection successful!'))
   .catch((e) => console.log(e));
 
-http.listen(process.env.PORT, () => {
+server.listen(process.env.PORT, () => {
   console.log('Server Is Running On ' + process.env.PORT);
 });
 
