@@ -174,6 +174,8 @@ exports.deleteAd = catchAsync(async (req, res, next) => {
 exports.deleteManyAds = catchAsync(async (req, res, next) => {
   const ad = await Ad.deleteMany({ _id: req.body });
 
+  await Chat.deleteMany({ ad: req.body });
+
   if (ad.ok > 0 && ad.deletedCount > 0) {
     res.status(201).json({ status: 'success' });
   } else {
