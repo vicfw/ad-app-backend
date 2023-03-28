@@ -34,7 +34,9 @@ exports.createCategory = catchAsync(async (req, res) => {
 
 exports.getallCategories = catchAsync(async (req, res, next) => {
   try {
-    const categories = await Category.find({}).populate('ads');
+    const categories = await Category.find({})
+      .populate('ads')
+      .sort({ createdAt: 1 });
 
     if (!categories) {
       return res.status(504).json({ msg: 'no category found' });
@@ -92,7 +94,7 @@ exports.getLastFourCategories = catchAsync(async (req, res, next) => {
     parentId: null,
   })
     .limit(4)
-    .sort({ createdAt: -1 });
+    .sort({ createdAt: 1 });
 
   res.status(200).json({ status: 'success', data: lastFourCategories });
 });
