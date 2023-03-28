@@ -94,7 +94,7 @@ exports.getLastFourCategories = catchAsync(async (req, res, next) => {
     parentId: null,
   })
     .limit(4)
-    .sort({ createdAt: -1 });
+    .sort({ createdAt: 1 });
 
   res.status(200).json({ status: 'success', data: lastFourCategories });
 });
