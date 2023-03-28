@@ -84,7 +84,25 @@ exports.updateCategories = catchAsync(async (req, res) => {
 exports.deleteCategories = catchAsync(async (req, res) => {
   const { _id } = req.body;
 
-  await Category.findOneAndDelete({ _id });
+  const category = await Category.findOne({ _id });
+
+  if (!category.parentId) {
+    const children = await Category.find({ parentId: _id });
+    const childrenIds = children.map((child) => child._id);
+
+    const subChildren = await Category.find({ parentId: childrenIds });
+    const subChildrenIds = subChildren.map((subChild) => subChild._id);
+
+    const idsForDelete = childrenIds.concat(subChildrenIds).concat([_id]);
+
+    if (!idsForDelete) {
+      return;
+    }
+
+    await Category.deleteMany({ _id: idsForDelete });
+
+    return res.status(200).json('deleted');
+  }
 
   return res.status(200).json('deleted');
 });
