@@ -144,5 +144,6 @@ const adSchema = mongoose.Schema(
 );
 
 adSchema.index({ title: 'text' });
+adSchema.index({ createdAt: 1 }, { expireAfterSeconds: 10 });
 
 module.exports = mongoose.model('Ad', adSchema);
