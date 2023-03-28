@@ -23,7 +23,10 @@ const createSendToken = (user, statusCode, req, res, hasCookie) => {
       ),
 
       httpOnly: true,
-      domain: '.gettruckloan.com',
+      domain:
+        req.secure || req.headers['x-forwarded-proto'] === 'https'
+          ? '.gettruckloan.com'
+          : 'localhost',
       secure: req.secure || req.headers['x-forwarded-proto'] === 'https',
     });
   }
