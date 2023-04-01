@@ -35,7 +35,7 @@ exports.createCategory = catchAsync(async (req, res) => {
 exports.getallCategories = catchAsync(async (req, res, next) => {
   try {
     const categories = await Category.find({})
-      .populate('ads')
+      .populate({ path: 'ads', match: { isApproved: true } })
       .sort({ createdAt: 1 });
 
     if (!categories) {
