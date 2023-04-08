@@ -74,13 +74,17 @@ exports.getAllAds = catchAsync(async (req, res, next) => {
 
   const filterObj = {
     ...(category ? { category } : undefined),
-    ...(title ? { title } : undefined),
+    ...(title
+      ? { title: { $text: { $search: title }, $options: 'i' } }
+      : undefined),
     ...(isApproved ? { isApproved: true } : undefined),
     ...(isNotApproved ? { isApproved: false } : undefined),
     ...(minPrice ? { price: { $gte: minPrice } } : undefined),
     ...(maxPrice ? { price: { $lte: maxPrice } } : undefined),
-    ...(address ? { address: { $regex: address } } : undefined),
-    ...(location ? { location } : undefined),
+    ...(address ? { address: { $regex: address, $options: 'i' } } : undefined),
+    ...(location
+      ? { location: { $regex: location, $options: 'i' } }
+      : undefined),
     ...(condition ? { condition } : undefined),
     ...(saleBy ? { saleBy } : undefined),
     ...(minKilometers ? { kilometers: { $gte: minKilometers } } : undefined),
