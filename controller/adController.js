@@ -74,9 +74,7 @@ exports.getAllAds = catchAsync(async (req, res, next) => {
 
   const filterObj = {
     ...(category ? { category } : undefined),
-    ...(title
-      ? { title: { $text: { $search: title }, $options: 'i' } }
-      : undefined),
+    ...(title ? { title: { $regex: title, $options: 'i' } } : undefined),
     ...(isApproved ? { isApproved: true } : undefined),
     ...(isNotApproved ? { isApproved: false } : undefined),
     ...(minPrice ? { price: { $gte: minPrice } } : undefined),
@@ -111,6 +109,8 @@ exports.getAllAds = catchAsync(async (req, res, next) => {
     .limit(limit ? +limit : 0)
     .skip(page === 1 ? +limit : +page * +limit)
     .sort({ createdAt: -1 });
+
+  console.log(ads);
 
   const totalCount = await Ad.find(filterObj).countDocuments();
   res
