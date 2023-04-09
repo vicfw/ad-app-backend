@@ -31,7 +31,6 @@ const createSendToken = (user, statusCode, req, res, hasCookie) => {
   //   });
   // }
 
-
   if (hasCookie) {
     res.cookie('jwt', token, {
       path: '/',
@@ -40,7 +39,11 @@ const createSendToken = (user, statusCode, req, res, hasCookie) => {
       ),
 
       httpOnly: true,
-      domain: '.gettruckloan.com',
+      sameSite: 'lax',
+      domain:
+        req.secure || req.headers['x-forwarded-proto'] === 'https'
+          ? '.gettruckloan.com'
+          : undefined,
       secure: req.secure || req.headers['x-forwarded-proto'] === 'https',
     });
   }
@@ -80,7 +83,9 @@ exports.login = catchAsync(async (req, res, next) => {
     return next(new AppError('Please provide email and password!', 400));
   }
   // 2) Check if user exists && password is correct
-  const user = await User.findOne({ email }).select('+password');
+  const user = await User.findOne({ email })
+    .select('+password')
+    .select('-notificationToken');
 
   if (!user || !(await user.correctPassword(password, user.password))) {
     return next(new AppError('Incorrect email or password', 401));
@@ -122,6 +127,43 @@ exports.mobileLogin = catchAsync(async (req, res, next) => {
   // 3) If everything ok, send token to client
   createSendToken(user, 200, req, res, false);
 });
+
+exports.me = async (req, res, next) => {
+  console.log(req.headers);
+
+  if (req.headers?.cookie) {
+    const jwtToken = req.headers?.cookie.split('jwt=')[1];
+
+    try {
+      // 1) verify token
+      const decoded = await promisify(jwt.verify)(
+        jwtToken,
+        process.env.JWT_SECRET
+      );
+
+      // 2) Check if user still exists
+      const currentUser = await User.findById(decoded.id).select(
+        '-notificationToken'
+      );
+      if (!currentUser) {
+        return res
+          .status(200)
+          .json({ status: 'success', message: 'guess user' });
+      }
+
+      // 3) Check if user changed password after the token was issued
+      if (currentUser.changedPasswordAfter(decoded.iat)) {
+        next();
+      }
+
+      // THERE IS A LOGGED IN USER
+      return res.status(200).json({ status: 'success', data: currentUser });
+    } catch (err) {
+      next();
+    }
+  }
+  return res.status(200).json({ status: 'success', message: 'guess user' });
+};
 
 exports.logout = (req, res) => {
   res.cookie('jwt', 'loggedout', {

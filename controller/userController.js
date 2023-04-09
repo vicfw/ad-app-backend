@@ -92,7 +92,7 @@ exports.updateMe = catchAsync(async (req, res, next) => {
 
 exports.getCurrentUser = catchAsync(async (req, res, next) => {
   const query = req.query;
-
+  console.log('current user');
   const user = await User.findById(req.user.id).populate([
     {
       path: 'ads',
