@@ -82,7 +82,7 @@ exports.updateMe = catchAsync(async (req, res, next) => {
   const user = await User.findByIdAndUpdate(req.user.id, filteredBody, {
     new: true,
     runValidators: true,
-  });
+  }).select(req.body.website ? '-notificationToken' : '');
 
   res.status(200).json({
     status: 'success',
@@ -92,7 +92,6 @@ exports.updateMe = catchAsync(async (req, res, next) => {
 
 exports.getCurrentUser = catchAsync(async (req, res, next) => {
   const query = req.query;
-  console.log('current user');
   const user = await User.findById(req.user.id).populate([
     {
       path: 'ads',
