@@ -15,22 +15,6 @@ const signToken = (id) => {
 const createSendToken = (user, statusCode, req, res, hasCookie) => {
   const token = signToken(user._id);
 
-  // if (hasCookie) {
-  //   res.cookie('jwt', token, {
-  //     path: '/',
-  //     expires: new Date(
-  //       Date.now() + process.env.JWT_COOKIE_EXPIRES_IN * 24 * 60 * 60 * 1000
-  //     ),
-
-  //     httpOnly: true,
-  //     domain:
-  //       req.secure || req.headers['x-forwarded-proto'] === 'https'
-  //         ? '.gettruckloan.com'
-  //         : 'localhost',
-  //     secure: req.secure || req.headers['x-forwarded-proto'] === 'https',
-  //   });
-  // }
-
   if (hasCookie) {
     res.cookie('jwt', token, {
       path: '/',
@@ -160,7 +144,7 @@ exports.me = async (req, res, next) => {
       next();
     }
   }
-  return res.status(200).json({ status: 'success', message: 'guess user' });
+  return res.status(200).json({ status: 'success', data: null });
 };
 
 exports.logout = (req, res) => {
