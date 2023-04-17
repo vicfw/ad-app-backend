@@ -17,7 +17,10 @@ exports.accessChat = catchAsync(async (req, res) => {
       { users: { $elemMatch: { $eq: userId } } },
     ],
   })
-    .populate('users', '-password')
+    .populate({
+      path: 'users',
+      select: '-notificationToken',
+    })
     .populate('latestMessage')
     .populate('ad');
 
@@ -37,7 +40,7 @@ exports.accessChat = catchAsync(async (req, res) => {
 
     const createdChat = await Chat.create(chatData);
     const fullChat = await Chat.findOne({ _id: createdChat._id })
-      .populate('users', '-password')
+      .populate('users', '-notificationToken')
       .populate('ad');
     res.status(200).json(fullChat);
   }
@@ -49,7 +52,7 @@ exports.accessChat = catchAsync(async (req, res) => {
 
 exports.fetchChats = catchAsync(async (req, res) => {
   Chat.find({ users: { $elemMatch: { $eq: req.user._id } } })
-    .populate('users', '-password')
+    .populate({ path: 'users', select: '-notificationToken' })
     .populate('latestMessage')
     .populate('ad')
     .sort({ updatedAt: -1 })

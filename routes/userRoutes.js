@@ -4,7 +4,7 @@ const authController = require('./../controller/authController');
 
 const router = express.Router();
 
-router.get('/me', authController.me);
+router.get('/web-me', authController.me);
 router.post('/signup', authController.signup);
 router.post('/mobile-signup', authController.mobileSignup);
 router.post('/login', authController.login);
@@ -18,7 +18,7 @@ router.patch('/resetPassword/:token', authController.resetPassword);
 router.use(authController.protect);
 
 // router.patch('/updateMyPassword', authController.updatePassword);
-// // router.get('/me', authController.protect, userController.getCurrentUser);
+router.get('/me', authController.protect, userController.getCurrentUser);
 router.patch('/updateMe', userController.updateMe);
 router.delete('/deleteMe', userController.deleteMe);
 

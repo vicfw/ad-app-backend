@@ -114,7 +114,7 @@ exports.mobileLogin = catchAsync(async (req, res, next) => {
 
 exports.me = async (req, res, next) => {
   if (req.headers?.cookie) {
-    const jwtToken = req.headers?.cookie.split('jwt=')[1];
+    const jwtToken = req.cookies?.jwt;
 
     try {
       // 1) verify token
@@ -124,9 +124,30 @@ exports.me = async (req, res, next) => {
       );
 
       // 2) Check if user still exists
-      const currentUser = await User.findById(decoded.id).select(
-        '-notificationToken'
-      );
+      const currentUser = await User.findById(decoded.id)
+        .populate([
+          {
+            path: 'ads',
+            model: 'Ad',
+            // options: {
+            //   skip: query?.limit ? +query.limit : 0,
+            //   limit:
+            //     query?.page === 1 ? +query.limit : +query.page * +query.limit,
+            //   sort: { createdAt: -1 },
+            // },
+          },
+          {
+            path: 'featuredAds',
+            model: 'FeatureAd',
+            options: {
+              select: '-createdAt',
+            },
+          },
+        ])
+        .select('-notificationToken');
+
+      console.log(currentUser, 'curr');
+
       if (!currentUser) {
         return res
           .status(200)
@@ -143,8 +164,9 @@ exports.me = async (req, res, next) => {
     } catch (err) {
       next();
     }
+  } else {
+    return res.status(200).json({ status: 'success', data: null });
   }
-  return res.status(200).json({ status: 'success', data: null });
 };
 
 exports.logout = (req, res) => {
@@ -159,8 +181,6 @@ exports.logout = (req, res) => {
 exports.protect = catchAsync(async (req, res, next) => {
   // 1) Getting token and check of it's there
   let token;
-
-  console.log(req.cookies, 'log');
 
   if (
     req.headers.authorization &&
