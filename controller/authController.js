@@ -124,29 +124,25 @@ exports.me = async (req, res, next) => {
       );
 
       // 2) Check if user still exists
-      const currentUser = await User.findById(decoded.id)
-        .populate([
-          {
-            path: 'ads',
-            model: 'Ad',
-            // options: {
-            //   skip: query?.limit ? +query.limit : 0,
-            //   limit:
-            //     query?.page === 1 ? +query.limit : +query.page * +query.limit,
-            //   sort: { createdAt: -1 },
-            // },
+      const currentUser = await User.findById(decoded.id).populate([
+        {
+          path: 'ads',
+          model: 'Ad',
+          // options: {
+          //   skip: query?.limit ? +query.limit : 0,
+          //   limit:
+          //     query?.page === 1 ? +query.limit : +query.page * +query.limit,
+          //   sort: { createdAt: -1 },
+          // },
+        },
+        {
+          path: 'featuredAds',
+          model: 'FeatureAd',
+          options: {
+            select: '-createdAt',
           },
-          {
-            path: 'featuredAds',
-            model: 'FeatureAd',
-            options: {
-              select: '-createdAt',
-            },
-          },
-        ])
-        .select('-notificationToken');
-
-      console.log(currentUser, 'curr');
+        },
+      ]);
 
       if (!currentUser) {
         return res
