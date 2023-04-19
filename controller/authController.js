@@ -166,11 +166,8 @@ exports.me = async (req, res, next) => {
 };
 
 exports.logout = (req, res) => {
-  res.cookie('jwt', 'loggedout', {
-    expires: new Date(Date.now() + 10 * 1000),
-    httpOnly: true,
-  });
-  // delete req.user;
+  res.clearCookie('jwt');
+  delete req.user;
   res.status(200).json({ status: 'success' });
 };
 
