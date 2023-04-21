@@ -101,7 +101,14 @@ exports.getCurrentUser = catchAsync(async (req, res, next) => {
         limit: query?.page === 1 ? +query.limit : +query.page * +query.limit,
         sort: { createdAt: -1 },
       },
+      populate: [
+        {
+          path: 'ads.creator',
+          model: 'User',
+        },
+      ],
     },
+
     {
       path: 'featuredAds',
       model: 'FeatureAd',
