@@ -101,8 +101,6 @@ exports.getAllAds = catchAsync(async (req, res, next) => {
     ...(wheels ? { wheels } : undefined),
   };
 
-  console.log(filterObj, 'filterObj');
-
   const ads = await Ad.find(filterObj)
     .populate({ path: 'creator', populate: { path: 'featuredAds' } })
     .populate('category')

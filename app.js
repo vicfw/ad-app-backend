@@ -17,6 +17,7 @@ const featuredAdRouter = require('./routes/featuredAd');
 const chatRoutes = require('./routes/chatRoutes');
 const messageRoutes = require('./routes/messageRoutes');
 const savedSearchRoutes = require('./routes/savedSearchRoutes');
+const notificationSenderRoutes = require('./routes/notificationSenderRoutes');
 
 const AppError = require('./utils/appError');
 
@@ -61,6 +62,7 @@ app.use('/api/v1/featuredAd', featuredAdRouter);
 app.use('/api/v1/chat', chatRoutes);
 app.use('/api/v1/message', messageRoutes);
 app.use('/api/v1/savedSearch', savedSearchRoutes);
+app.use('/api/v1/notificationSender', notificationSenderRoutes);
 
 app.all('*', (req, res, next) => {
   next(new AppError(`Can't find ${req.originalUrl} on this server!`, 404));

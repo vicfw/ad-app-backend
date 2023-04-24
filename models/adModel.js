@@ -46,20 +46,20 @@ const adSchema = mongoose.Schema(
     },
     price: {
       type: Number,
+      min: 0,
+    },
+    year: {
+      type: Number,
       required: true,
       min: 0,
     },
-    location: {
-      type: String,
-      required: true,
-      trim: true,
-      lowercase: true,
-    },
     address: {
-      type: String,
-      required: true,
-      trim: true,
-      lowercase: true,
+      latitude: {
+        type: Number,
+      },
+      longitude: {
+        type: Number,
+      },
     },
     phone: {
       type: String,
@@ -108,7 +108,6 @@ const adSchema = mongoose.Schema(
     exteriorColor: {
       type: String,
       trim: true,
-      lowercase: true,
     },
     differential: {
       type: String,
