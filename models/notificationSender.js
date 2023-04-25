@@ -8,10 +8,20 @@ const notificationSender = mongoose.Schema(
     },
     categoryId: {
       type: mongoose.Schema.Types.ObjectId,
+      ref: 'Category',
     },
-    brand: String,
-    kilometers: Number,
-    year: Number,
+    brand: {
+      type: String,
+      trim: true,
+    },
+    kilometers: {
+      type: Number,
+      trim: true,
+    },
+    year: {
+      type: Number,
+      trim: true,
+    },
   },
   { timestamps: true }
 );

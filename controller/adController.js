@@ -3,6 +3,11 @@ const Ad = require('../models/adModel');
 const FeatureAd = require('../models/featuredAd');
 const Chat = require('../models/chatModel');
 const AppError = require('../utils/appError');
+const NotificationSender = require('../models/notificationSender');
+const User = require('../models/userModel');
+const fetch = (...args) =>
+  import('node-fetch').then(({ default: fetch }) => fetch(...args));
+
 exports.createAd = catchAsync(async (req, res, next) => {
   // todo:test trimmedBody
   // let trimmedBody;
@@ -26,6 +31,8 @@ exports.updateAd = catchAsync(async (req, res, next) => {
     { new: true, runValidators: true }
   );
 
+  console.log(req.body, 'req.body');
+
   res.status(201).json({ status: 'success', ad });
 });
 
@@ -34,6 +41,59 @@ exports.updateManyAds = catchAsync(async (req, res, next) => {
     { _id: req.body.ids },
     { ...req.body.property }
   );
+
+  if (req.body.property.isApproved) {
+    const notificationSender = await NotificationSender.find({});
+
+    const ads = await Ad.find({
+      _id: { $in: req.body.ids },
+    });
+
+    let userIds = [];
+
+    ads.forEach((ad) => {
+      notificationSender.forEach((notif) => {
+        if (
+          ad.category === notif.categoryId ||
+          ad.year === notif.year ||
+          ad.brand === notif.brand ||
+          ad.kilometers === notif.kilometers
+        ) {
+          userIds.push(notif.user);
+        }
+      });
+    });
+
+    if (!userIds.length) {
+      return;
+    }
+
+    const users = await User.find({
+      _id: { $in: userIds },
+    });
+
+    console.log(users, 'users');
+
+    users.forEach(async (user) => {
+      console.log(user, 'user');
+      const body = {
+        to: user.notificationToken,
+        title: 'We found you a match ad',
+      };
+
+      const response = await fetch('https://exp.host/--/api/v2/push/send', {
+        method: 'POST',
+        body: JSON.stringify(body),
+        headers: {
+          Accept: 'application/json',
+          'Accept-Encoding': 'gzip,deflate',
+          'Content-Type': 'application/json',
+        },
+      });
+
+      console.log(response, 'response');
+    });
+  }
 
   if (ad.ok > 0) {
     res.status(201).json({ status: 'success' });
@@ -70,8 +130,6 @@ exports.getAllAds = catchAsync(async (req, res, next) => {
     isNotApproved,
   } = req.query;
 
-  console.log(req.query);
-
   const filterObj = {
     ...(category ? { category } : undefined),
     ...(title ? { title: { $regex: title, $options: 'i' } } : undefined),
@@ -107,8 +165,6 @@ exports.getAllAds = catchAsync(async (req, res, next) => {
     .limit(limit ? +limit : 0)
     .skip(page === 1 ? +limit : +page * +limit)
     .sort({ createdAt: -1 });
-
-  console.log(ads);
 
   const totalCount = await Ad.find(filterObj).countDocuments();
   res
