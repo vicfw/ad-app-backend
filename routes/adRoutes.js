@@ -9,16 +9,16 @@ const {
   updateManyAds,
   deleteManyAds,
 } = require('../controller/adController');
-const { protect } = require('../controller/authController');
+const { protect, restrictTo } = require('../controller/authController');
 const router = express.Router();
 
 router.post('/create', protect, createAd);
 router.get('/search', searchAdsController);
-router.get('/', protect, getAllAds);
+router.get('/', protect, restrictTo('admin'), getAllAds);
 router.patch('/', protect, updateManyAds);
 router.patch('/:id', protect, updateAd);
 router.get('/:id', getSingleAdController);
-router.delete('/', protect, deleteManyAds);
+router.delete('/', protect, restrictTo('admin'), deleteManyAds);
 router.delete('/:id', protect, deleteAd);
 
 module.exports = router;

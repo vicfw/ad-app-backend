@@ -48,6 +48,15 @@ const adSchema = mongoose.Schema(
       type: Number,
       min: 0,
     },
+    socialMedia: {
+      facebook: String,
+      instagram: String,
+      twitter: String,
+      youtube: String,
+      tiktok: String,
+      pinterest: String,
+      linkedin: String,
+    },
     year: {
       type: Number,
       required: true,
