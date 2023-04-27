@@ -31,8 +31,6 @@ exports.updateAd = catchAsync(async (req, res, next) => {
     { new: true, runValidators: true }
   );
 
-  console.log(req.body, 'req.body');
-
   res.status(201).json({ status: 'success', ad });
 });
 
@@ -72,10 +70,7 @@ exports.updateManyAds = catchAsync(async (req, res, next) => {
       _id: { $in: userIds },
     });
 
-    console.log(users, 'users');
-
     users.forEach(async (user) => {
-      console.log(user, 'user');
       const body = {
         to: user.notificationToken,
         title: 'We found you a match ad',
@@ -90,8 +85,6 @@ exports.updateManyAds = catchAsync(async (req, res, next) => {
           'Content-Type': 'application/json',
         },
       });
-
-      console.log(response, 'response');
     });
   }
 

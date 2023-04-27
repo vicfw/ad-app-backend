@@ -71,6 +71,15 @@ exports.login = catchAsync(async (req, res, next) => {
     .select('+password')
     .select('-notificationToken');
 
+  if (!user.active) {
+    return next(
+      new AppError(
+        'Your account is disabled,contact us for more information.',
+        400
+      )
+    );
+  }
+
   if (!user || !(await user.correctPassword(password, user.password))) {
     return next(new AppError('Incorrect email or password', 401));
   }

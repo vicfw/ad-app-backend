@@ -143,6 +143,8 @@ exports.createUser = (req, res) => {
 exports.getUser = factory.getOne(User);
 exports.getAllUsers = factory.getAll(User);
 
+exports.deleteManyUsers = factory.deleteMany(User);
+
 // Do NOT update passwords with this!
 exports.updateUser = factory.updateOne(User);
 exports.deleteUser = factory.deleteOne(User);

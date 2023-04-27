@@ -15,6 +15,16 @@ exports.deleteOne = (Model) =>
       data: null,
     });
   });
+exports.deleteMany = (Model) =>
+  catchAsync(async (req, res, next) => {
+    const doc = await Model.deleteMany({ _id: req.body });
+
+    if (doc.ok > 0 && doc.deletedCount > 0) {
+      res.status(201).json({ status: 'success' });
+    } else {
+      res.status(400).json({ status: 'fail' });
+    }
+  });
 
 exports.updateOne = (Model) =>
   catchAsync(async (req, res, next) => {
@@ -29,9 +39,7 @@ exports.updateOne = (Model) =>
 
     res.status(200).json({
       status: 'success',
-      data: {
-        data: doc,
-      },
+      data: doc,
     });
   });
 
@@ -65,7 +73,6 @@ exports.getOne = (Model, popOptions) =>
 
 exports.getAll = (Model) =>
   catchAsync(async (req, res, next) => {
-    // To allow for nested GET reviews on tour (hack)
     let filter = {};
     if (req.params.tourId) filter = { tour: req.params.tourId };
 
@@ -76,13 +83,13 @@ exports.getAll = (Model) =>
       .paginate();
     // const doc = await features.query.explain();
     const doc = await features.query;
+    const count = await Model.estimatedDocumentCount();
 
     // SEND RESPONSE
     res.status(200).json({
       status: 'success',
       results: doc.length,
-      data: {
-        data: doc,
-      },
+      allDocs: count,
+      data: doc,
     });
   });

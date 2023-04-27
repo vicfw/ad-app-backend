@@ -22,17 +22,17 @@ router.get('/me', authController.protect, userController.getCurrentUser);
 router.patch('/updateMe', userController.updateMe);
 router.delete('/deleteMe', userController.deleteMe);
 
-// // router.use(authController.restrictTo('admin'));
+router.use(authController.restrictTo('admin'));
 
 router
   .route('/')
   .get(userController.getAllUsers)
-  .post(userController.createUser);
+  .post(userController.createUser)
+  .delete(userController.deleteManyUsers);
 
 router
   .route('/:id')
   .get(userController.getUser)
-  .patch(userController.updateUser)
-  .delete(userController.deleteUser);
+  .patch(userController.updateUser);
 
 module.exports = router;
