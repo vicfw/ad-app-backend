@@ -121,12 +121,14 @@ exports.getAllAds = catchAsync(async (req, res, next) => {
     wheels,
     isApproved,
     isNotApproved,
+    isPopular,
   } = req.query;
 
   const filterObj = {
     ...(category ? { category } : undefined),
     ...(title ? { title: { $regex: title, $options: 'i' } } : undefined),
     ...(isApproved ? { isApproved: true } : undefined),
+    ...(isPopular ? { isPopular: true } : undefined),
     ...(isNotApproved ? { isApproved: false } : undefined),
     ...(minPrice ? { price: { $gte: minPrice } } : undefined),
     ...(maxPrice ? { price: { $lte: maxPrice } } : undefined),

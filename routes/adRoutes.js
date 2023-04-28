@@ -14,7 +14,7 @@ const router = express.Router();
 
 router.post('/create', protect, createAd);
 router.get('/search', searchAdsController);
-router.get('/', protect, restrictTo('admin'), getAllAds);
+router.get('/', getAllAds);
 router.patch('/', protect, updateManyAds);
 router.patch('/:id', protect, updateAd);
 router.get('/:id', getSingleAdController);
