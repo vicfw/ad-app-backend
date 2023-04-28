@@ -52,7 +52,7 @@ exports.accessChat = catchAsync(async (req, res) => {
 
 exports.fetchChats = catchAsync(async (req, res) => {
   Chat.find({ users: { $elemMatch: { $eq: req.user._id } } })
-    .populate({ path: 'users', select: '-notificationToken' })
+    .populate({ path: 'users' })
     .populate('latestMessage')
     .populate('ad')
     .sort({ updatedAt: -1 })
