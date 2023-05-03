@@ -183,19 +183,21 @@ exports.getSingleAdController = catchAsync(async (req, res) => {
 });
 
 exports.searchAdsController = catchAsync(async (req, res, next) => {
-  const { query } = req.query;
+  const { query: title } = req.query;
 
-  const lowerCaseQuery = query?.toLowerCase();
+  const filterObj = {
+    ...(title ? { title: { $regex: title, $options: 'i' } } : undefined),
+  };
 
-  if (!lowerCaseQuery) {
+  if (!title) {
     return res.status(400).json({ message: 'query string is empty' });
   }
 
-  const ads = await Ad.find({ $text: { $search: lowerCaseQuery } })
+  const ads = await Ad.find(filterObj)
     .sort({
       createdAt: -1,
     })
-    .limit(10);
+    .limit(5);
 
   if (!ads?.length) {
     return res.status(400).json({ message: 'no ad with this query' });
