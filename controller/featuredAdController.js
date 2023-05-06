@@ -11,7 +11,7 @@ exports.createFeaturedAd = catchAsync(async (req, res, next) => {
 });
 
 exports.deleteFeaturedAd = catchAsync(async (req, res, next) => {
-  await FeaturedAd.findByIdAndDelete({ _id: req.body.featuredAdId });
+  await FeaturedAd.findByIdAndDelete({ _id: req.params.id });
 
   res.status(200).json({ status: 'success' });
 });
@@ -19,6 +19,13 @@ exports.deleteFeaturedAd = catchAsync(async (req, res, next) => {
 exports.featuredAdByUser = catchAsync(async (req, res, next) => {
   const featureAd = await FeaturedAd.find({ owner: req.user })
     .populate('ad')
+    .select('-owner')
+    .select('-__v');
+  res.status(200).json({ status: 'success', featureAd });
+});
+
+exports.featuredAdByUserAndAd = catchAsync(async (req, res, next) => {
+  const featureAd = await FeaturedAd.findOne({ owner: req.user,ad:req.query.adId })
     .select('-owner')
     .select('-__v');
   res.status(200).json({ status: 'success', featureAd });
