@@ -1,12 +1,12 @@
-const catchAsync = require('../utils/catchAsync');
-const Ad = require('../models/adModel');
-const FeatureAd = require('../models/featuredAd');
-const Chat = require('../models/chatModel');
-const AppError = require('../utils/appError');
-const NotificationSender = require('../models/notificationSender');
-const User = require('../models/userModel');
+const catchAsync = require("../utils/catchAsync");
+const Ad = require("../models/adModel");
+const FeatureAd = require("../models/featuredAd");
+const Chat = require("../models/chatModel");
+const AppError = require("../utils/appError");
+const NotificationSender = require("../models/notificationSender");
+const User = require("../models/userModel");
 const fetch = (...args) =>
-  import('node-fetch').then(({ default: fetch }) => fetch(...args));
+  import("node-fetch").then(({ default: fetch }) => fetch(...args));
 
 exports.createAd = catchAsync(async (req, res, next) => {
   // todo:test trimmedBody
@@ -21,7 +21,7 @@ exports.createAd = catchAsync(async (req, res, next) => {
     creator: req.user._id,
   });
 
-  res.status(201).json({ status: 'success', ad });
+  res.status(201).json({ status: "success", ad });
 });
 
 exports.updateAd = catchAsync(async (req, res, next) => {
@@ -31,7 +31,7 @@ exports.updateAd = catchAsync(async (req, res, next) => {
     { new: true, runValidators: true }
   );
 
-  res.status(201).json({ status: 'success', ad });
+  res.status(201).json({ status: "success", ad });
 });
 
 exports.updateManyAds = catchAsync(async (req, res, next) => {
@@ -53,9 +53,9 @@ exports.updateManyAds = catchAsync(async (req, res, next) => {
       notificationSender.forEach((notif) => {
         if (
           ad.category === notif.categoryId ||
-          ad.year === notif.year ||
+          notif.maxYear < ad.year > notif.minYear ||
           ad.brand === notif.brand ||
-          ad.kilometers === notif.kilometers
+          notif.maxKilometers < ad.kilometers > notif.minKilometers
         ) {
           userIds.push(notif.user);
         }
@@ -73,25 +73,25 @@ exports.updateManyAds = catchAsync(async (req, res, next) => {
     users.forEach(async (user) => {
       const body = {
         to: user.notificationToken,
-        title: 'We found you a match ad',
+        title: "We found you a match ad for your notification",
       };
 
-      const response = await fetch('https://exp.host/--/api/v2/push/send', {
-        method: 'POST',
+      const response = await fetch("https://exp.host/--/api/v2/push/send", {
+        method: "POST",
         body: JSON.stringify(body),
         headers: {
-          Accept: 'application/json',
-          'Accept-Encoding': 'gzip,deflate',
-          'Content-Type': 'application/json',
+          Accept: "application/json",
+          "Accept-Encoding": "gzip,deflate",
+          "Content-Type": "application/json",
         },
       });
     });
   }
 
   if (ad.ok > 0) {
-    res.status(201).json({ status: 'success' });
+    res.status(201).json({ status: "success" });
   } else {
-    res.status(400).json({ status: 'fail' });
+    res.status(400).json({ status: "fail" });
   }
 });
 
@@ -126,15 +126,15 @@ exports.getAllAds = catchAsync(async (req, res, next) => {
 
   const filterObj = {
     ...(category ? { category } : undefined),
-    ...(title ? { title: { $regex: title, $options: 'i' } } : undefined),
+    ...(title ? { title: { $regex: title, $options: "i" } } : undefined),
     ...(isApproved ? { isApproved: true } : undefined),
     ...(isPopular ? { isPopular: true } : undefined),
     ...(isNotApproved ? { isApproved: false } : undefined),
     ...(minPrice ? { price: { $gte: minPrice } } : undefined),
     ...(maxPrice ? { price: { $lte: maxPrice } } : undefined),
-    ...(address ? { address: { $regex: address, $options: 'i' } } : undefined),
+    ...(address ? { address: { $regex: address, $options: "i" } } : undefined),
     ...(location
-      ? { location: { $regex: location, $options: 'i' } }
+      ? { location: { $regex: location, $options: "i" } }
       : undefined),
     ...(condition ? { condition } : undefined),
     ...(saleBy ? { saleBy } : undefined),
@@ -155,8 +155,8 @@ exports.getAllAds = catchAsync(async (req, res, next) => {
   };
 
   const ads = await Ad.find(filterObj)
-    .populate({ path: 'creator', populate: { path: 'featuredAds' } })
-    .populate('category')
+    .populate({ path: "creator", populate: { path: "featuredAds" } })
+    .populate("category")
     .limit(limit ? +limit : 0)
     .skip(page === 1 ? +limit : +page * +limit)
     .sort({ createdAt: -1 });
@@ -164,7 +164,7 @@ exports.getAllAds = catchAsync(async (req, res, next) => {
   const totalCount = await Ad.find(filterObj).countDocuments();
   res
     .status(200)
-    .json({ status: 'success', totalCount, count: ads.length, ads });
+    .json({ status: "success", totalCount, count: ads.length, ads });
 });
 
 exports.getSingleAdController = catchAsync(async (req, res) => {
@@ -172,25 +172,27 @@ exports.getSingleAdController = catchAsync(async (req, res) => {
 
   const ad = await Ad.findOne({ _id })
     .populate({
-      path: 'creator',
+      path: "creator",
     })
-    .populate('category');
+    .populate("category");
 
   if (!ad) {
-    return res.status(400).json({ status: 'fail', message: 'bad request' });
+    return res.status(400).json({ status: "fail", message: "bad request" });
   }
-  return res.status(200).json({ status: 'success', ad });
+  return res.status(200).json({ status: "success", ad });
 });
 
 exports.searchAdsController = catchAsync(async (req, res, next) => {
   const { query: title } = req.query;
 
   const filterObj = {
-    ...(title ? { title: { $regex: title, $options: 'i' } } : undefined),
+    ...(title
+      ? { title: { $regex: title, $options: "i" }, isApproved: true }
+      : undefined),
   };
 
   if (!title) {
-    return res.status(400).json({ message: 'query string is empty' });
+    return res.status(400).json({ message: "query string is empty" });
   }
 
   const ads = await Ad.find(filterObj)
@@ -200,11 +202,11 @@ exports.searchAdsController = catchAsync(async (req, res, next) => {
     .limit(5);
 
   if (!ads?.length) {
-    return res.status(400).json({ message: 'no ad with this query' });
+    return res.status(400).json({ message: "no ad with this query" });
   }
 
   return res.status(200).json({
-    status: 'success',
+    status: "success",
     ads,
     count: ads.length,
     totalCount: ads.length,
@@ -218,11 +220,11 @@ exports.deleteAd = catchAsync(async (req, res, next) => {
   await Chat.findOneAndDelete({ ad: req.params.id });
 
   if (!doc) {
-    return next(new AppError('No document found with that ID', 404));
+    return next(new AppError("No document found with that ID", 404));
   }
 
   return res.status(204).json({
-    status: 'success',
+    status: "success",
     data: null,
   });
 });
@@ -232,8 +234,8 @@ exports.deleteManyAds = catchAsync(async (req, res, next) => {
   await Chat.deleteMany({ ad: req.body });
 
   if (ad.ok > 0 && ad.deletedCount > 0) {
-    res.status(201).json({ status: 'success' });
+    res.status(201).json({ status: "success" });
   } else {
-    res.status(400).json({ status: 'fail' });
+    res.status(400).json({ status: "fail" });
   }
 });

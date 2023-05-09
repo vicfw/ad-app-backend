@@ -1,5 +1,3 @@
-const Message = require('../models/messageModel');
-
 const catchAsync = require('../utils/catchAsync');
 const NotificationSender = require('../models/notificationSender');
 
@@ -41,6 +39,7 @@ exports.deleteNotificationSender = catchAsync(async (req, res) => {
 });
 
 exports.updateNotificationSender = catchAsync(async (req, res, next) => {
+  console.log(req.body,"in update notificantion sender");
   const notificationSender = await NotificationSender.findByIdAndUpdate(
     { _id: req.params.id },
     { ...req.body },
