@@ -63,6 +63,7 @@ const adSchema = mongoose.Schema(
       min: 0,
     },
     address: {
+      address:String,
       latitude: {
         type: Number,
       },

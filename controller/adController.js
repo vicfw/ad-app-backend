@@ -14,10 +14,10 @@ exports.createAd = catchAsync(async (req, res, next) => {
   // for (let item in req.body) {
   //   trimmedBody = { ...item.trim() };
   // }
-  const lowerCaseTitle = req.body.title.toLowerCase();
+  const trimmedLowerCaseTitle = req.body.title.trim().toLowerCase();
   const ad = await Ad.create({
     ...req.body,
-    title: lowerCaseTitle,
+    title: trimmedLowerCaseTitle,
     creator: req.user._id,
   });
 
