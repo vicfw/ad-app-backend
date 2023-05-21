@@ -105,6 +105,7 @@ exports.getAllAds = catchAsync(async (req, res, next) => {
     maxPrice,
     address,
     location,
+    brand,
     condition,
     saleBy,
     minKilometers,
@@ -127,11 +128,15 @@ exports.getAllAds = catchAsync(async (req, res, next) => {
   const filterObj = {
     ...(category ? { category } : undefined),
     ...(title ? { title: { $regex: title, $options: "i" } } : undefined),
+    ...(brand ? { brand } : undefined),
     ...(isApproved ? { isApproved: true } : undefined),
     ...(isPopular ? { isPopular: true } : undefined),
     ...(isNotApproved ? { isApproved: false } : undefined),
     ...(minPrice ? { price: { $gte: minPrice } } : undefined),
     ...(maxPrice ? { price: { $lte: maxPrice } } : undefined),
+    ...(maxPrice && minPrice
+      ? { price: { $lte: maxPrice, $gte: minPrice } }
+      : undefined),
     ...(address ? { address: { $regex: address, $options: "i" } } : undefined),
     ...(location
       ? { location: { $regex: location, $options: "i" } }
@@ -232,7 +237,7 @@ exports.deleteManyAds = catchAsync(async (req, res, next) => {
   const ad = await Ad.deleteMany({ _id: req.body });
 
   await Chat.deleteMany({ ad: req.body });
-  await FeatureAd.deleteMany({ad:req.body})
+  await FeatureAd.deleteMany({ ad: req.body });
 
   if (ad.ok > 0 && ad.deletedCount > 0) {
     res.status(201).json({ status: "success" });
