@@ -18,6 +18,7 @@ function getCategoriesAndSubcategories(categories, parentId = null) {
       ads: cat.ads,
       children: getCategoriesAndSubcategories(categories, cat._id),
       createdAt: cat.createdAt,
+      updatedAt: cat.updatedAt,
     });
   }
   return categoryList.sort((a, b) => b.createdAt - a.createdAt);
@@ -87,7 +88,6 @@ exports.deleteCategories = catchAsync(async (req, res) => {
 
   const category = await Category.findOne({ _id });
 
-
   if (!category.parentId) {
     const children = await Category.find({ parentId: _id });
     const childrenIds = children.map((child) => child._id);
@@ -116,7 +116,7 @@ exports.getLastFourCategories = catchAsync(async (req, res, next) => {
     parentId: null,
   })
     .limit(4)
-    .sort({ createdAt: 1 });
+    .sort({ updatedAt: -1 });
 
   res.status(200).json({ status: "success", data: lastFourCategories });
 });
