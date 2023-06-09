@@ -112,10 +112,12 @@ exports.deleteCategories = catchAsync(async (req, res) => {
 });
 
 exports.getLastFourCategories = catchAsync(async (req, res, next) => {
+  const { count } = req.query;
+
   const lastFourCategories = await Category.find({
     parentId: null,
   })
-    .limit(4)
+    .limit(parseInt(count) ?? 4)
     .sort({ updatedAt: -1 });
 
   res.status(200).json({ status: "success", data: lastFourCategories });

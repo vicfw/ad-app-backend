@@ -188,7 +188,10 @@ exports.getSingleAdController = catchAsync(async (req, res) => {
 });
 
 exports.searchAdsController = catchAsync(async (req, res, next) => {
-  const { query: title } = req.query;
+  const { query: title, limit, page } = req.query;
+
+  console.log(page, "page");
+  console.log(limit, "limit");
 
   const filterObj = {
     ...(title
@@ -200,11 +203,14 @@ exports.searchAdsController = catchAsync(async (req, res, next) => {
     return res.status(400).json({ message: "query string is empty" });
   }
 
+  const totalCount = await Ad.countDocuments(filterObj);
+
   const ads = await Ad.find(filterObj)
     .sort({
       createdAt: -1,
     })
-    .limit(5);
+    .limit(limit ? +limit : 0)
+    .skip(page === 1 ? +limit : +page * +limit);
 
   if (!ads?.length) {
     return res.status(400).json({ message: "no ad with this query" });
@@ -214,7 +220,7 @@ exports.searchAdsController = catchAsync(async (req, res, next) => {
     status: "success",
     ads,
     count: ads.length,
-    totalCount: ads.length,
+    totalCount,
   });
 });
 
