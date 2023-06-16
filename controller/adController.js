@@ -27,7 +27,7 @@ exports.createAd = catchAsync(async (req, res, next) => {
 exports.updateAd = catchAsync(async (req, res, next) => {
   const ad = await Ad.findByIdAndUpdate(
     { _id: req.params.id },
-    { ...req.body },
+    { ...req.body, isApproved: false },
     { new: true, runValidators: true }
   );
 
@@ -189,9 +189,6 @@ exports.getSingleAdController = catchAsync(async (req, res) => {
 
 exports.searchAdsController = catchAsync(async (req, res, next) => {
   const { query: title, limit, page } = req.query;
-
-  console.log(page, "page");
-  console.log(limit, "limit");
 
   const filterObj = {
     ...(title
