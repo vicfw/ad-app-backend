@@ -30,7 +30,7 @@ exports.updateAd = catchAsync(async (req, res, next) => {
     { ...req.body, isApproved: false },
     { new: true, runValidators: true }
   );
-
+  console.log(ad, "ad");
   res.status(201).json({ status: "success", ad });
 });
 
@@ -62,30 +62,28 @@ exports.updateManyAds = catchAsync(async (req, res, next) => {
       });
     });
 
-    if (!userIds.length) {
-      return;
-    }
-
-    const users = await User.find({
-      _id: { $in: userIds },
-    });
-
-    users.forEach(async (user) => {
-      const body = {
-        to: user.notificationToken,
-        title: "We found you a match ad for your notification",
-      };
-
-      const response = await fetch("https://exp.host/--/api/v2/push/send", {
-        method: "POST",
-        body: JSON.stringify(body),
-        headers: {
-          Accept: "application/json",
-          "Accept-Encoding": "gzip,deflate",
-          "Content-Type": "application/json",
-        },
+    if (userIds?.length) {
+      const users = await User.find({
+        _id: { $in: userIds },
       });
-    });
+
+      users.forEach(async (user) => {
+        const body = {
+          to: user.notificationToken,
+          title: "We found you a match ad for your notification",
+        };
+
+        const response = await fetch("https://exp.host/--/api/v2/push/send", {
+          method: "POST",
+          body: JSON.stringify(body),
+          headers: {
+            Accept: "application/json",
+            "Accept-Encoding": "gzip,deflate",
+            "Content-Type": "application/json",
+          },
+        });
+      });
+    }
   }
 
   if (ad.ok > 0) {
