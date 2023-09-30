@@ -31,7 +31,15 @@ exports.accessChat = catchAsync(async (req, res) => {
     select: "name photo email",
   });
 
-  if (isChat.length > 0) {
+  let isValid = false;
+
+  isChat.forEach((chat) => {
+    if (chat.ad._id === adId) {
+      isValid = true;
+    }
+  });
+
+  if (isValid) {
     res.status(200).json(isChat[0]);
   } else {
     var chatData = {
