@@ -74,7 +74,7 @@ app.post("/webhook", (req, res) => {
 
   // Handle the push event from GitHub
   if (body && body.ref === "refs/heads/master") {
-    console.log("Received push event for the master branch");
+    console.log("Received push event for the master branch...");
 
     // Execute the update and restart script
     exec("/update_and_restart.sh", (error, stdout, stderr) => {
