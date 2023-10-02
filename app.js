@@ -21,6 +21,7 @@ const notificationSenderRoutes = require("./routes/notificationSenderRoutes");
 const layoutRoutes = require("./routes/layoutRoutes");
 
 const AppError = require("./utils/appError");
+const catchAsync = require("./utils/catchAsync");
 
 app.set("trust proxy", 1);
 
@@ -65,6 +66,30 @@ app.use("/api/v1/message", messageRoutes);
 app.use("/api/v1/savedSearch", savedSearchRoutes);
 app.use("/api/v1/notificationSender", notificationSenderRoutes);
 app.use("/api/v1/layout", layoutRoutes);
+
+// Define the endpoint where GitHub will send webhook payloads
+app.post("/webhook", (req, res) => {
+  const { body } = req;
+
+  // Handle the push event from GitHub
+  if (body && body.ref === "refs/heads/master") {
+    console.log("Received push event for the master branch");
+
+    // Execute the update and restart script
+    exec("/update_and_restart.sh", (error, stdout, stderr) => {
+      if (error) {
+        console.error(`Error executing update_and_restart.sh: ${error}`);
+        return res.status(500).send("Internal Server Error");
+      }
+
+      console.log(`Update and restart script output: ${stdout}`);
+      res.status(200).send("Webhook received and processed successfully");
+    });
+  } else {
+    console.log("Received a push event, but not for the master branch");
+    res.status(200).send("Webhook received, but not for the master branch");
+  }
+});
 
 app.all("*", (req, res, next) => {
   next(new AppError(`Can't find ${req.originalUrl} on this server!`, 404));
