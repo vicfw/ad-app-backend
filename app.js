@@ -21,8 +21,7 @@ const notificationSenderRoutes = require("./routes/notificationSenderRoutes");
 const layoutRoutes = require("./routes/layoutRoutes");
 
 const AppError = require("./utils/appError");
-
-const exec = require("child_process");
+const exec = require("child_process").exec;
 
 app.set("trust proxy", 1);
 
