@@ -70,6 +70,7 @@ app.use("/api/v1/layout", layoutRoutes);
 // Define the endpoint where GitHub will send webhook payloads
 app.post("/", (req, res) => {
   const { body } = req;
+  console.log("worked");
 
   // Handle the push event from GitHub
   if (body && body.ref === "refs/heads/master") {
