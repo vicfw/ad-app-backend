@@ -68,7 +68,7 @@ app.use("/api/v1/notificationSender", notificationSenderRoutes);
 app.use("/api/v1/layout", layoutRoutes);
 
 // Define the endpoint where GitHub will send webhook payloads
-app.post("/webhook", (req, res) => {
+app.post("/", (req, res) => {
   const { body } = req;
   console.log("worked");
 
