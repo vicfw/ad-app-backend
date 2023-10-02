@@ -97,10 +97,12 @@ exports.getAllAds = catchAsync(async (req, res, next) => {
   const {
     category,
     title,
-    limit,
-    page,
+    limit = 99999,
+    page = 1,
     minPrice,
     maxPrice,
+    minDate,
+    maxDate,
     address,
     location,
     brand,
@@ -123,48 +125,55 @@ exports.getAllAds = catchAsync(async (req, res, next) => {
     isPopular,
   } = req.query;
 
-  const filterObj = {
-    ...(category ? { category } : undefined),
-    ...(title ? { title: { $regex: title, $options: "i" } } : undefined),
-    ...(brand ? { brand } : undefined),
-    ...(isApproved ? { isApproved: true } : undefined),
-    ...(isPopular ? { isPopular: true } : undefined),
-    ...(isNotApproved ? { isApproved: false } : undefined),
-    ...(minPrice ? { price: { $gte: minPrice } } : undefined),
-    ...(maxPrice ? { price: { $lte: maxPrice } } : undefined),
-    ...(maxPrice && minPrice
-      ? { price: { $lte: maxPrice, $gte: minPrice } }
-      : undefined),
-    ...(address ? { address: { $regex: address, $options: "i" } } : undefined),
-    ...(location
-      ? { location: { $regex: location, $options: "i" } }
-      : undefined),
-    ...(condition ? { condition } : undefined),
-    ...(saleBy ? { saleBy } : undefined),
-    ...(minKilometers ? { kilometers: { $gte: minKilometers } } : undefined),
-    ...(maxKilometers ? { kilometers: { $lte: maxKilometers } } : undefined),
-    ...(transmission ? { transmission } : undefined),
-    ...(engineHP ? { engineHP: { $regex: engineHP } } : undefined),
-    ...(engine ? { engine: { $regex: engine } } : undefined),
-    ...(exteriorColor
-      ? { exteriorColor: { $regex: exteriorColor } }
-      : undefined),
-    ...(differential ? { differential: { $regex: differential } } : undefined),
-    ...(frontAxel ? { frontAxel: { $regex: frontAxel } } : undefined),
-    ...(realAxel ? { realAxel: { $regex: realAxel } } : undefined),
-    ...(suspension ? { suspension: { $regex: suspension } } : undefined),
-    ...(wheelbase ? { wheelbase: { $regex: wheelbase } } : undefined),
-    ...(wheels ? { wheels } : undefined),
-  };
+  const filterObj = {};
 
-  const ads = await Ad.find(filterObj)
+  // Define filter conditions
+  if (category) filterObj.category = category;
+  if (title) filterObj.title = { $regex: title, $options: "i" };
+  if (brand) filterObj.brand = brand;
+  if (isApproved) filterObj.isApproved = true;
+  if (isPopular) filterObj.isPopular = true;
+  if (isNotApproved) filterObj.isApproved = false;
+  if (minPrice) filterObj.price = { $gte: minPrice };
+  if (maxPrice) filterObj.price = { ...filterObj.price, $lte: maxPrice };
+  if (minPrice && maxPrice)
+    filterObj.price = { $gte: minPrice, $lte: maxPrice };
+  if (minDate) filterObj.year = { $gte: minDate };
+  if (maxDate) filterObj.year = { ...filterObj.year, $lte: maxDate };
+  if (minDate && maxDate) filterObj.year = { $gte: minDate, $lte: maxDate };
+  if (address) filterObj.address = { $regex: address, $options: "i" };
+  if (location) filterObj.location = { $regex: location, $options: "i" };
+  if (condition) filterObj.condition = condition;
+  if (saleBy) filterObj.saleBy = saleBy;
+  if (minKilometers) filterObj.kilometers = { $gte: minKilometers };
+  if (maxKilometers)
+    filterObj.kilometers = { ...filterObj.kilometers, $lte: maxKilometers };
+  if (transmission) filterObj.transmission = transmission;
+  if (engineHP) filterObj.engineHP = { $regex: engineHP };
+  if (engine) filterObj.engine = { $regex: engine };
+  if (exteriorColor) filterObj.exteriorColor = { $regex: exteriorColor };
+  if (differential) filterObj.differential = { $regex: differential };
+  if (frontAxel) filterObj.frontAxel = { $regex: frontAxel };
+  if (realAxel) filterObj.realAxel = { $regex: realAxel };
+  if (suspension) filterObj.suspension = { $regex: suspension };
+  if (wheelbase) filterObj.wheelbase = { $regex: wheelbase };
+  if (wheels) filterObj.wheels = wheels;
+
+  const adsQuery = Ad.find(filterObj)
     .populate({ path: "creator", populate: { path: "featuredAds" } })
     .populate("category")
-    .limit(limit ? +limit : 0)
-    .skip(page === 1 ? +limit : +page * +limit)
     .sort({ createdAt: -1 });
 
-  const totalCount = await Ad.find(filterObj).countDocuments();
+  const skipCount = page > 1 ? (page - 1) * limit : 0;
+
+  if (limit) adsQuery.limit(+limit);
+  if (page) adsQuery.skip(skipCount);
+
+  const [ads, totalCount] = await Promise.all([
+    adsQuery.exec(),
+    Ad.countDocuments(filterObj),
+  ]);
+
   res
     .status(200)
     .json({ status: "success", totalCount, count: ads.length, ads });
