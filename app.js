@@ -70,13 +70,10 @@ app.use("/api/v1/layout", layoutRoutes);
 // Define the endpoint where GitHub will send webhook payloads
 app.post("/webhook", (req, res) => {
   const { body } = req;
-  console.log(body, "worked");
 
-  // Handle the push event from GitHub
   if (body && body.ref === "refs/heads/master") {
     console.log("Received push event for the master branch...");
 
-    // Execute the update and restart script
     exec("/update_and_restart.sh", (error, stdout, stderr) => {
       if (error) {
         console.error(`Error executing update_and_restart.sh: ${error}`);
