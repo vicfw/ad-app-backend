@@ -73,7 +73,7 @@ app.post("/", (req, res) => {
   console.log("worked");
 
   // Handle the push event from GitHub
-  if (body && body.ref === "refs/heads/master") {
+  if (body && body.ref === "refs/heads/master.") {
     console.log("Received push event for the master branch.");
 
     // Execute the update and restart script
