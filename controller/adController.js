@@ -98,7 +98,7 @@ exports.getAllAds = catchAsync(async (req, res, next) => {
     category,
     title,
     limit = 99999,
-    page = 1,
+    page = 0,
     minPrice,
     maxPrice,
     minDate,
