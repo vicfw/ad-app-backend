@@ -174,10 +174,7 @@ exports.getAllAds = catchAsync(async (req, res, next) => {
     .populate("category")
     .sort({ createdAt: -1 });
 
-  console.log(page, "page");
-
-  // const skipCount = page > 1 ? (page - 1) * limit : 0;
-  const skipCount = page * limit;
+  const skipCount = page > 1 ? (page - 1) * limit : 0;
 
   if (limit) adsQuery.limit(+limit);
   if (page) adsQuery.skip(skipCount);
