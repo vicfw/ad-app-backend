@@ -134,6 +134,7 @@ exports.getAllAds = catchAsync(async (req, res, next) => {
   if (isApproved) filterObj.isApproved = true;
   if (isPopular) filterObj.isPopular = true;
   if (isNotApproved) filterObj.isApproved = false;
+
   if (minPrice) filterObj.price = { $gte: minPrice };
   if (maxPrice) filterObj.price = { ...filterObj.price, $lte: maxPrice };
   if (minPrice && maxPrice)
@@ -159,7 +160,7 @@ exports.getAllAds = catchAsync(async (req, res, next) => {
   if (wheelbase) filterObj.wheelbase = { $regex: wheelbase };
   if (wheels) filterObj.wheels = wheels;
 
-  const adsQuery = Ad.find(filterObj)
+  const adsQuery = Ad.find({ ...filterObj, price: null })
     .populate({ path: "creator", populate: { path: "featuredAds" } })
     .populate("category")
     .sort({ createdAt: -1 });
@@ -171,7 +172,7 @@ exports.getAllAds = catchAsync(async (req, res, next) => {
 
   const [ads, totalCount] = await Promise.all([
     adsQuery.exec(),
-    Ad.countDocuments(filterObj),
+    Ad.countDocuments({ ...filterObj, price: null }),
   ]);
 
   res
