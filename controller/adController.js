@@ -184,7 +184,7 @@ exports.getAllAds = catchAsync(async (req, res, next) => {
 
   const [ads, totalCount] = await Promise.all([
     adsQuery.exec(),
-    Ad.countDocuments(filterObj),
+    Ad.countDocuments({ ...filterObj, ...secondFilter }),
   ]);
 
   res
