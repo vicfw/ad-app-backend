@@ -99,7 +99,7 @@ exports.getAllAds = catchAsync(async (req, res, next) => {
     title,
     limit = 99999,
     page = 0,
-    minPrice,
+    minPrice = 0,
     maxPrice,
     minDate,
     maxDate,
@@ -134,16 +134,11 @@ exports.getAllAds = catchAsync(async (req, res, next) => {
   if (isApproved) filterObj.isApproved = true;
   if (isPopular) filterObj.isPopular = true;
   if (isNotApproved) filterObj.isApproved = false;
-  if (minPrice) {
-    filterObj.price = { $gte: minPrice };
-  }
-  if (maxPrice) {
-    filterObj.price = { ...filterObj.price, $lte: maxPrice };
-  }
-  if (minPrice && maxPrice) {
-    filterObj.price = { $gte: minPrice, $lte: maxPrice };
-  }
 
+  if (minPrice) filterObj.price = { $gte: minPrice };
+  if (maxPrice) filterObj.price = { ...filterObj.price, $lte: maxPrice };
+  if (minPrice && maxPrice)
+    filterObj.price = { $gte: minPrice, $lte: maxPrice };
   if (minDate) filterObj.year = { $gte: minDate };
   if (maxDate) filterObj.year = { ...filterObj.year, $lte: maxDate };
   if (minDate && maxDate) filterObj.year = { $gte: minDate, $lte: maxDate };
@@ -170,7 +165,7 @@ exports.getAllAds = catchAsync(async (req, res, next) => {
     .populate("category")
     .sort({ createdAt: -1 });
 
-  const skipCount = page > 1 ? (page - 1) * limit : 0;
+  const skipCount = page * limit;
 
   if (limit) adsQuery.limit(+limit);
   if (page) adsQuery.skip(skipCount);
