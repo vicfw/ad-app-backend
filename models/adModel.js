@@ -76,6 +76,12 @@ const adSchema = mongoose.Schema(
       type: String,
       default: "",
       min: 0,
+      validate: [
+        new RegExp(
+          "^([2-9]{1}[0-9]{2})(([2-9]{1})(1[0,2-9]{1}|[0,2-9]{1}[0-9]{1}))([0-9]{4})$"
+        ),
+        "please enter a valid phone number",
+      ],
     },
     condition: {
       type: String,
@@ -101,6 +107,7 @@ const adSchema = mongoose.Schema(
     },
     kilometers: {
       type: Number,
+      default: 0,
     },
     transmission: {
       type: String,
