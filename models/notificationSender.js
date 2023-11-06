@@ -27,10 +27,13 @@ const notificationSender = mongoose.Schema(
     maxKilometers: {
       type: Number,
       trim: true,
-     
       validate: function (value) {
-        if (value >= this.minKilometers) {
-          throw new Error("Maximum kilometers should be greater than or equal to minimum kilometers.");
+        console.log(value, "value");
+        console.log(this.minKilometers, "this.minKilometers");
+        if (parseInt(value) <= parseInt(this.minKilometers)) {
+          throw new Error(
+            "Maximum kilometers should be greater than or equal to minimum kilometers."
+          );
         }
       },
     },
@@ -48,8 +51,10 @@ const notificationSender = mongoose.Schema(
       type: Number,
       trim: true,
       validate: function (value) {
-        if (value >= this.minYear) {
-          throw new Error("Maximum year should be greater than or equal to minimum year.");
+        if (value <= this.minYear) {
+          throw new Error(
+            "Maximum year should be greater than or equal to minimum year."
+          );
         }
       },
     },
