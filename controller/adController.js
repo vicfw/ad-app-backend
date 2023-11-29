@@ -30,7 +30,6 @@ exports.updateAd = catchAsync(async (req, res, next) => {
     { ...req.body, isApproved: false },
     { new: true, runValidators: true }
   );
-  console.log(ad, "ad");
   res.status(201).json({ status: "success", ad });
 });
 
