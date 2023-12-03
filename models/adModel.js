@@ -37,7 +37,6 @@ const adSchema = mongoose.Schema(
       type: String,
       required: true,
       trim: true,
-      lowercase: true,
     },
     category: {
       type: mongoose.Schema.Types.ObjectId,
