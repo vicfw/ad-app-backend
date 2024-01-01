@@ -1,7 +1,7 @@
 const multer = require("multer");
 const aws = require("aws-sdk");
 const s3Storage = require("multer-sharp-s3");
-const s3 = new aws.S3({});
+const s3 = new aws.S3();
 const crypto = require("crypto");
 
 s3.config.update({
@@ -42,24 +42,6 @@ const profilePhotoStorage = s3Storage({
   max: true,
 });
 
-const adPhotoStorage = s3Storage({
-  s3,
-  Bucket: "adsphoto",
-  ACL: "",
-  Key: (req, file, cb) => {
-    crypto.pseudoRandomBytes(16, (err, raw) => {
-      cb(err, err ? undefined : raw.toString("hex"));
-    });
-  },
-  resize: [
-    { suffix: "md", width: 300, height: 500 },
-    { suffix: "lg", width: 600, height: 600 },
-    { suffix: "xs", width: 140, height: 120 },
-  ],
-  max: true,
-  multiple: true,
-});
-
 const bannerImage = s3Storage({
   s3,
   Bucket: "adsphoto",
@@ -74,7 +56,4 @@ const bannerImage = s3Storage({
 
 exports.upload = multer({ storage: storage2 });
 exports.profilePhotoUpload = multer({ storage: profilePhotoStorage });
-exports.adImageUpload = multer({
-  storage: adPhotoStorage,
-});
 exports.bannerImageUpload = multer({ storage: bannerImage });

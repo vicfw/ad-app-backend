@@ -28,8 +28,6 @@ const notificationSender = mongoose.Schema(
       type: Number,
       trim: true,
       validate: function (value) {
-        console.log(value, "value");
-        console.log(this.minKilometers, "this.minKilometers");
         if (parseInt(value) <= parseInt(this.minKilometers)) {
           throw new Error(
             "Maximum kilometers should be greater than or equal to minimum kilometers."
