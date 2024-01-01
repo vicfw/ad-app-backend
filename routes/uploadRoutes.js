@@ -14,7 +14,8 @@ const {
 } = require("../utils/multerMidleware");
 const multer = require("multer");
 
-const uploadAdImage = multer({ dest: "tmp/" });
+const storage = multer.memoryStorage();
+const uploadAdImage = multer({ storage });
 
 router.post("/categoryImage", protect, upload.single("image"), categoryImage);
 router.post("/adImage", uploadAdImage.array("images"), adImage);

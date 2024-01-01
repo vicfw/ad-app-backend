@@ -43,17 +43,17 @@ exports.adImage = catchAsync(async (req, res, next) => {
 
   try {
     const promises = req.files.map(async (file) => {
-      const imageXs = await sharp(file.path)
+      const imageXs = await sharp(file.buffer)
         .resize(140, 120)
         .toFormat("png")
         .jpeg({ quality: 80 })
         .toBuffer();
-      const imageMd = await sharp(file.path)
+      const imageMd = await sharp(file.buffer)
         .resize(300, 500)
         .toFormat("png")
         .jpeg({ quality: 80 })
         .toBuffer();
-      const imageLg = await sharp(file.path)
+      const imageLg = await sharp(file.buffer)
         .resize(600, 600)
         .toFormat("png")
         .jpeg({ quality: 80 })
