@@ -13,10 +13,11 @@ exports.accessChat = catchAsync(async (req, res) => {
       .json({ status: "error", message: "UserId param not sent with request" });
   }
 
-  var isChat = await Chat.find({
+  const existingChat = await Chat.findOne({
     $and: [
       { users: { $elemMatch: { $eq: req.user._id } } },
       { users: { $elemMatch: { $eq: userId } } },
+      { ad: adId },
     ],
   })
     .populate({
@@ -26,21 +27,8 @@ exports.accessChat = catchAsync(async (req, res) => {
     .populate("latestMessage")
     .populate("ad");
 
-  isChat = await User.populate(isChat, {
-    path: "latestMessage.sender",
-    select: "name photo email",
-  });
-
-  let isValid = false;
-
-  isChat.forEach((chat) => {
-    if (chat.ad._id === adId) {
-      isValid = true;
-    }
-  });
-
-  if (isValid) {
-    res.status(200).json(isChat[0]);
+  if (existingChat) {
+    res.status(200).json(existingChat);
   } else {
     var chatData = {
       chatName: "sender",
