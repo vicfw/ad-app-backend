@@ -15,8 +15,8 @@ const signToken = (id) => {
 
 const createSendToken = (user, statusCode, req, res, hasCookie) => {
   const token = signToken(user._id);
-  const isSecure = req.headers["x-forwarded-proto"] === "https" || req.secure;
-  console.log(isSecure, "isSecure");
+  const isSecure = false;
+  console.log(req.headers.origin, "req.headers.origin");
   if (hasCookie) {
     res.cookie("jwt", token, {
       path: "/",
