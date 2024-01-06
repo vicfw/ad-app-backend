@@ -16,6 +16,7 @@ const signToken = (id) => {
 const createSendToken = (user, statusCode, req, res, hasCookie) => {
   const token = signToken(user._id);
   const isSecure = req.header.origin === "https://www.gettruck.ca";
+  console.log(req.header.origin, "req.header.origin");
   console.log(isSecure, "isSecure");
   if (hasCookie) {
     res.cookie("jwt", token, {
