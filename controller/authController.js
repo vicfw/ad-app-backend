@@ -25,8 +25,11 @@ const createSendToken = (user, statusCode, req, res, hasCookie) => {
 
       httpOnly: true,
       sameSite: "lax",
-      domain: req.headers.origin.includes("https") ? ".gettruck.ca" : undefined,
-      secure: req.headers.origin.includes("https"),
+      domain:
+        req.headers.origin === "https://www.gettruck.ca"
+          ? ".gettruckloan.com"
+          : undefined,
+      secure: req.headers.origin === "https://www.gettruck.ca",
     });
   }
 
