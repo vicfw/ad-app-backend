@@ -15,7 +15,7 @@ const signToken = (id) => {
 
 const createSendToken = (user, statusCode, req, res, hasCookie) => {
   const token = signToken(user._id);
-
+  const isSecure = req.headers["x-forwarded-proto"] === "https" || req.secure;
   if (hasCookie) {
     res.cookie("jwt", token, {
       path: "/",
@@ -25,11 +25,8 @@ const createSendToken = (user, statusCode, req, res, hasCookie) => {
 
       httpOnly: true,
       sameSite: "lax",
-      domain:
-        req.headers.origin === "https://www.gettruck.ca"
-          ? ".gettruckloan.com"
-          : undefined,
-      secure: req.headers.origin === "https://www.gettruck.ca",
+      domain: isSecure ? ".gettruck.ca" : undefined,
+      secure: isSecure,
     });
   }
 
