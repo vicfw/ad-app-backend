@@ -26,7 +26,7 @@ const createSendToken = (user, statusCode, req, res, hasCookie) => {
       ),
 
       httpOnly: true,
-      sameSite: "Lax",
+      sameSite: "lax",
       domain: isSecure ? ".gettruck.ca" : undefined,
       secure: isSecure,
     });
