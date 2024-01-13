@@ -41,6 +41,8 @@ exports.adImage = catchAsync(async (req, res, next) => {
     });
   }
 
+  console.log(req.files, "files");
+
   try {
     const promises = req.files.map(async (file) => {
       const imageXs = await sharp(file.buffer)
