@@ -31,10 +31,6 @@ app.use(cors({ credentials: true, origin: true }));
 
 app.options("*", cors());
 
-app.use((req, res, next) => {
-  console.log(`Received ${req.method} request to ${req.originalUrl}`);
-  next();
-});
 app.use(helmet());
 
 // Limit requests from same API
