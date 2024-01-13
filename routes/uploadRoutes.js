@@ -18,15 +18,7 @@ const storage = multer.memoryStorage();
 const uploadAdImage = multer({ storage });
 
 router.post("/categoryImage", protect, upload.single("image"), categoryImage);
-router.post(
-  "/adImage",
-  (req, res, next) => {
-    console.log("hello");
-    next();
-  },
-  uploadAdImage.array("images"),
-  adImage
-);
+router.post("/adImage", uploadAdImage.array("images"), adImage);
 router.post("/profilePhoto", profilePhotoUpload.single("image"), profilePhoto);
 router.post("/banner", bannerImageUpload.single("image"), bannerPhoto);
 
