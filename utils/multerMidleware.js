@@ -19,10 +19,6 @@ const storage2 = s3Storage({
       cb(err, err ? undefined : raw.toString("hex"));
     });
   },
-  resize: {
-    width: 60,
-    height: 60,
-  },
   max: true,
 });
 
@@ -34,10 +30,6 @@ const profilePhotoStorage = s3Storage({
     crypto.pseudoRandomBytes(16, (err, raw) => {
       cb(err, err ? undefined : raw.toString("hex"));
     });
-  },
-  resize: {
-    width: 400,
-    height: 400,
   },
   max: true,
 });
