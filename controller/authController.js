@@ -174,7 +174,7 @@ exports.me = async (req, res, next) => {
 
 exports.logout = (req, res) => {
   const isSecure = req.headers.origin === "https://www.gettruck.ca";
-  res.cookie("loggedout", token, {
+  res.cookie("jwt", "loggedout", {
     path: "/",
     expires: new Date(
       Date.now() + process.env.JWT_COOKIE_EXPIRES_IN * 24 * 60 * 60 * 1000
