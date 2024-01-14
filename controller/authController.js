@@ -173,8 +173,18 @@ exports.me = async (req, res, next) => {
 };
 
 exports.logout = (req, res) => {
-  res.clearCookie("jwt");
-  delete req.user;
+  const isSecure = req.headers.origin === "https://www.gettruck.ca";
+  res.cookie("loggedout", token, {
+    path: "/",
+    expires: new Date(
+      Date.now() + process.env.JWT_COOKIE_EXPIRES_IN * 24 * 60 * 60 * 1000
+    ),
+
+    httpOnly: true,
+    sameSite: "lax",
+    domain: isSecure ? ".gettruck.ca" : undefined,
+    secure: isSecure,
+  });
   res.status(200).json({ status: "success" });
 };
 
