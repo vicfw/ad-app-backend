@@ -173,15 +173,8 @@ exports.me = async (req, res, next) => {
 };
 
 exports.logout = (req, res) => {
-  res.cookie("jwt", "loggedout", {
-    expires: new Date(Date.now() + 10 * 1000),
-    path: "/",
-    httpOnly: true,
-    sameSite: "lax",
-    secure: process.env.NODE_ENV === "production",
-    domain: process.env.NODE_ENV === "production" ? ".gettruck.ca" : undefined,
-  });
-
+  res.clearCookie("jwt");
+  delete req.user;
   res.status(200).json({ status: "success" });
 };
 
