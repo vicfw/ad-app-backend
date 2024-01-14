@@ -174,6 +174,7 @@ exports.me = async (req, res, next) => {
 
 exports.logout = (req, res) => {
   const isSecure = req.headers.origin === "https://www.gettruck.ca";
+
   res.cookie("jwt", "loggedout", {
     expires: new Date(Date.now() + 10 * 1000),
     path: "/",
@@ -182,7 +183,6 @@ exports.logout = (req, res) => {
     domain: isSecure ? ".gettruck.ca" : undefined,
     secure: isSecure,
   });
-  delete req.user;
 
   res.status(200).json({ status: "success" });
 };
