@@ -46,19 +46,19 @@ exports.adImage = catchAsync(async (req, res, next) => {
   try {
     const promises = req.files.map(async (file) => {
       const imageXs = await sharp(file.buffer)
-        .resize(140, 120)
+        .resize(140, 120, { fit: "contain" })
         .toFormat("png")
-        .jpeg({ quality: 80 })
+        .jpeg({ quality: 100 })
         .toBuffer();
       const imageMd = await sharp(file.buffer)
-        .resize(300, 500)
+        .resize(300, 500, { fit: "contain" })
         .toFormat("png")
-        .jpeg({ quality: 80 })
+        .jpeg({ quality: 100 })
         .toBuffer();
       const imageLg = await sharp(file.buffer)
-        .resize(600, 600)
+        .resize(600, 600, { fit: "contain" })
         .toFormat("png")
-        .jpeg({ quality: 80 })
+        .jpeg({ quality: 100 })
         .toBuffer();
 
       const paramsXs = {
