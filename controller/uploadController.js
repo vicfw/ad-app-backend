@@ -3,9 +3,9 @@ const AWS = require("aws-sdk");
 const sharp = require("sharp");
 
 AWS.config.update({
-  secretAccessKey: process.env.S3_UPLOAD_SECRET, // Not working key, Your SECRET ACCESS KEY from AWS should go here, never share it!!!
-  accessKeyId: process.env.S3_UPLOAD_KEY, // Not working key, Your ACCESS KEY ID from AWS should go here, never share it!!!
-  region: process.env.S3_UPLOAD_REGION, // region of your bucket
+  secretAccessKey: process.env.S3_UPLOAD_SECRET,
+  accessKeyId: process.env.S3_UPLOAD_KEY,
+  region: process.env.S3_UPLOAD_REGION,
 });
 const s3 = new AWS.S3();
 
@@ -40,38 +40,38 @@ exports.adImage = catchAsync(async (req, res, next) => {
       message: "Something went wrong!",
     });
   }
-
-  console.log(req.files, "files");
-
   try {
     const promises = req.files.map(async (file) => {
       const imageXs = await sharp(file.buffer)
+        .resize(140, 120, { fit: "inside" })
         .jpeg({ quality: 100 })
         .toBuffer();
       const imageMd = await sharp(file.buffer)
+        .resize(300, 500, { fit: "inside" })
         .jpeg({ quality: 100 })
         .toBuffer();
       const imageLg = await sharp(file.buffer)
+        .resize(600, 600, { fit: "inside" })
         .jpeg({ quality: 100 })
         .toBuffer();
 
       const paramsXs = {
         Bucket: "adsphoto",
-        Key: `${file.originalname}`,
+        Key: `${file.originalname + new Date()}`,
         Body: imageXs,
         ContentType: file.mimetype,
         ACL: "",
       };
       const paramsMd = {
         Bucket: "adsphoto",
-        Key: `${file.originalname}`,
+        Key: `${file.originalname + new Date()}`,
         Body: imageMd,
         ContentType: file.mimetype,
         ACL: "",
       };
       const paramsLg = {
         Bucket: "adsphoto",
-        Key: `${file.originalname}`,
+        Key: `${file.originalname + new Date()}`,
         Body: imageLg,
         ContentType: file.mimetype,
         ACL: "",
