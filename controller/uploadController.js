@@ -54,6 +54,9 @@ exports.adImage = catchAsync(async (req, res, next) => {
         .resize(600, 600, { fit: "inside" })
         .jpeg({ quality: 100 })
         .toBuffer();
+      const imageOriginal = await sharp(file.buffer)
+        .jpeg({ quality: 100 })
+        .toBuffer();
 
       const paramsXs = {
         Bucket: "adsphoto",
@@ -77,9 +80,18 @@ exports.adImage = catchAsync(async (req, res, next) => {
         ACL: "",
       };
 
+      const paramsOriginal = {
+        Bucket: "adsphoto",
+        Key: `${file.originalname + new Date()}`,
+        Body: imageOriginal,
+        ContentType: file.mimetype,
+        ACL: "",
+      };
+
       const resultXs = await s3.upload(paramsXs).promise();
       const resultMd = await s3.upload(paramsMd).promise();
       const resultLg = await s3.upload(paramsLg).promise();
+      const resultOriginal = await s3.upload(paramsOriginal).promise();
 
       return {
         xs: {
@@ -90,6 +102,9 @@ exports.adImage = catchAsync(async (req, res, next) => {
         },
         lg: {
           Location: resultLg.Location,
+        },
+        original: {
+          Location: resultOriginal.Location,
         },
       };
     });

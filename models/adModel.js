@@ -31,6 +31,11 @@ const adSchema = mongoose.Schema(
         required: true,
         maxLength: 10,
       },
+      original: {
+        type: [String],
+        required: false,
+        maxLength: 10,
+      },
     },
 
     description: {
