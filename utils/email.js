@@ -4,7 +4,7 @@ module.exports = class Email {
   constructor(user, code) {
     this.to = user.email;
     this.firstName = user.name.split(" ")[0];
-    this.from = `Get Truck Inc.`;
+    this.from = "Get Truck Inc.";
     this.code = code;
   }
 
