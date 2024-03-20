@@ -167,6 +167,7 @@ exports.deleteAccountCode = catchAsync(async (req, res, next) => {
       message: "Token sent to email!",
     });
   } catch (err) {
+    console.log(err, "err");
     await DeleteAccountToken.findOneAndDelete({ userId: user._id });
     return next(
       new AppError("There was an error sending the email. Try again later!"),
