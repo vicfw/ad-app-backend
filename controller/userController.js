@@ -176,6 +176,20 @@ exports.deleteAccountCode = catchAsync(async (req, res, next) => {
   }
 });
 
+exports.deleteAccountEmailValidation = catchAsync(async (req, res, next) => {
+  const { code } = req.body;
+
+  const token = await DeleteAccountToken.findOne({
+    token: code,
+    deleteAccountExpires: { $gt: Date.now() },
+  });
+  if (!token) {
+    return next(new AppError("Token is incorrect or its expired.", 400));
+  }
+
+  return res.json({ status: "success", message: "Provided code is correct" });
+});
+
 exports.getUser = factory.getOne(User);
 exports.getAllUsers = factory.getAll(User);
 

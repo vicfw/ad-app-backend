@@ -17,6 +17,11 @@ router.post(
   "/forgotPasswordValidation",
   authController.forgotPasswordValidation
 );
+router.post(
+  "/deleteAccountValidation",
+  userController.deleteAccountEmailValidation
+);
+
 router.patch("/resetPassword", authController.resetPassword);
 
 // Protect all routes after this middleware
