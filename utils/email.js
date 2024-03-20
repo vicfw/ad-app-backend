@@ -4,7 +4,7 @@ module.exports = class Email {
   constructor(user, code) {
     this.to = user.email;
     this.firstName = user.name.split(" ")[0];
-    this.from = `Ge <${process.env.EMAIL_FROM}>`;
+    this.from = `Ge Truck`;
     this.code = code;
   }
 
@@ -32,6 +32,7 @@ module.exports = class Email {
 
   // Send the actual email
   async send(template, subject) {
+    console.log(this.from, "this.from");
     // 2) Define email options
     const mailOptions = {
       from: this.from,
