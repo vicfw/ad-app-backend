@@ -4,6 +4,7 @@ const User = require("./../models/userModel");
 const catchAsync = require("./../utils/catchAsync");
 const AppError = require("./../utils/appError");
 const factory = require("./handlerFactory");
+const DeleteAccountToken = require("./../models/deleteAccountToken");
 
 const multerStorage = multer.diskStorage({
   destination: (req, file, cb) => {
