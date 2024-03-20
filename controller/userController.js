@@ -127,6 +127,7 @@ exports.getCurrentUser = catchAsync(async (req, res, next) => {
 });
 
 exports.deleteMe = catchAsync(async (req, res, next) => {
+  console.log(req.user.id);
   const updatedUser = await User.findByIdAndUpdate(
     req.user.id,
     { active: false },
