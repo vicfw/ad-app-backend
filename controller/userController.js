@@ -134,6 +134,8 @@ exports.deleteMe = catchAsync(async (req, res, next) => {
     { new: true }
   );
 
+  console.log(updatedUser, "updatedUser");
+
   if (!updatedUser) {
     return next(new AppError("No user found with that ID", 404));
   }
