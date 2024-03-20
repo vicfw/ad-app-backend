@@ -57,4 +57,11 @@ module.exports = class Email {
       "Your password reset token (valid for only 10 minutes)"
     );
   }
+
+  async sendDeleteAccount() {
+    await this.send(
+      "deleteAccount",
+      "Your delete account token (valid for only 10 minutes)"
+    );
+  }
 };
