@@ -189,6 +189,7 @@ exports.logout = (req, res) => {
 };
 
 exports.protect = catchAsync(async (req, res, next) => {
+  console.log("hererere");
   // 1) Getting token and check of it's there
   let token;
 
@@ -366,6 +367,7 @@ exports.resetPassword = catchAsync(async (req, res, next) => {
 });
 
 exports.updatePassword = catchAsync(async (req, res, next) => {
+  console.log("here");
   // 1) Get user from collection
   const user = await User.findById(req.user.id).select("+password");
 
