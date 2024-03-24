@@ -4,7 +4,7 @@ module.exports = class Email {
   constructor(user, code) {
     this.to = user.email;
     this.firstName = user.name.split(" ")[0];
-    this.from = `Ge <${process.env.EMAIL_FROM}>`;
+    this.from = `Get Truck <${process.env.EMAIL_FROM}>`;
     this.code = code;
   }
 
@@ -55,6 +55,13 @@ module.exports = class Email {
     await this.send(
       "passwordReset",
       "Your password reset token (valid for only 10 minutes)"
+    );
+  }
+
+  async sendDeleteAccount() {
+    await this.send(
+      "deleteAccount",
+      "Your delete account token (valid for only 10 minutes)"
     );
   }
 };

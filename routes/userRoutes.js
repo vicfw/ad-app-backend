@@ -12,10 +12,16 @@ router.post("/mobile-login", authController.mobileLogin);
 router.get("/logout", authController.logout);
 
 router.post("/forgotPassword", authController.forgotPassword);
+router.post("/deleteAccountCode", userController.deleteAccountCode);
 router.post(
   "/forgotPasswordValidation",
   authController.forgotPasswordValidation
 );
+router.post(
+  "/deleteAccountValidation",
+  userController.deleteAccountEmailValidation
+);
+
 router.patch("/resetPassword", authController.resetPassword);
 
 // Protect all routes after this middleware

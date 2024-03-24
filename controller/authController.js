@@ -115,6 +115,15 @@ exports.mobileLogin = catchAsync(async (req, res, next) => {
     return next(new AppError("Incorrect email or password", 401));
   }
 
+  if (!user.active) {
+    return next(
+      new AppError(
+        "Your account is disabled,contact us for more information.",
+        400
+      )
+    );
+  }
+
   // 3) If everything ok, send token to client
   createSendToken(user, 200, req, res, false);
 });
